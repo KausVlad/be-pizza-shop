@@ -10,6 +10,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum EnumRole {
+  USER
+  MANAGER
+  ADMIN
+}
+
+enum EnumSex {
+  MALE
+  FEMALE
+  OTHER
+}
+
 model User {
   id           Int      @id @default(autoincrement())
   userPhoto    Bytes    @map("user_photo")
@@ -21,16 +33,4 @@ model User {
   phone        String   @unique
   passwordHash String   @map("password_hash")
   role         EnumRole
-}
-
-enum EnumRole {
-  USER
-  MANAGER
-  ADMIN
-}
-
-enum EnumSex {
-  MALE
-  FEMALE
-  OTHER
 }
