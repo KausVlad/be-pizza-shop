@@ -9,7 +9,7 @@ import {
   MinLength,
 } from 'class-validator';
 
-export class signUpDto {
+export class SignUpDto {
   @IsString()
   @IsNotEmpty()
   userName: string;
