@@ -24,7 +24,7 @@ enum EnumSex {
 
 model User {
   id           Int      @id @default(autoincrement())
-  userPhoto    Bytes    @map("user_photo")
+  userPhoto    String?  @map("user_photo")
   userName     String   @map("user_name")
   birthDate    DateTime @map("birth_date")
   address      String
@@ -32,5 +32,7 @@ model User {
   email        String   @unique
   phone        String   @unique
   passwordHash String   @map("password_hash")
-  role         EnumRole
+  role         EnumRole @default(USER)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
 }
