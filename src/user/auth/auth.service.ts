@@ -7,28 +7,27 @@ import { hash } from 'argon2';
 export class AuthService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async signUp(signUpDto: SignUpDto) {
-    const hashedPassword = await hash(signUpDto.password);
-
-    const user = this.prisma.user.create({
-      data: {
-        ...signUpDto,
-        passwordHash: hashedPassword,
-      },
-    });
-
-    return user;
-  }
-
-  private async uniqueUserCheck(email: string) {
+  async signUp({ password, ...userData }: SignUpDto) {
     const uniqueUserCheck = await this.prisma.user.count({
       where: {
-        email,
+        email: userData.email,
       },
     });
 
     if (uniqueUserCheck) {
       throw new HttpException('User already exists', 409);
     }
+
+    const hashedPassword = await hash(password);
+
+    console.log(hashedPassword);
+    const user = this.prisma.user.create({
+      data: {
+        ...userData,
+        passwordHash: hashedPassword,
+      },
+    });
+
+    return user;
   }
 }
