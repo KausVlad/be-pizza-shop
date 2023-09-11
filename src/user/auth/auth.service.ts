@@ -10,7 +10,7 @@ export class AuthService {
   async signUp({ password, ...userData }: SignUpDto) {
     const uniqueUserCheck = await this.prisma.user.count({
       where: {
-        email: userData.email,
+        OR: [{ email: userData.email }, { phone: userData.phone }],
       },
     });
 
@@ -20,7 +20,6 @@ export class AuthService {
 
     const hashedPassword = await hash(password);
 
-    console.log(hashedPassword);
     const user = this.prisma.user.create({
       data: {
         ...userData,
