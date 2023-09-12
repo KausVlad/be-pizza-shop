@@ -8,11 +8,11 @@ import {
 
 export class SignInDto {
   @IsEmail()
-  @ValidateIf((object, value) => value !== undefined)
+  @ValidateIf((signInDto: SignInDto) => !Boolean(signInDto.phone))
   email: string;
 
   @IsPhoneNumber('UA')
-  @ValidateIf((object, value) => value !== undefined)
+  @ValidateIf((signInDto: SignInDto) => !Boolean(signInDto.email))
   phone: string;
 
   @IsString()
