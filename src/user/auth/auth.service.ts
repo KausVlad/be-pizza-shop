@@ -1,7 +1,7 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { SignUpDto } from '../dto/signUp.dto';
-import { hash } from 'argon2';
+import * as argon2 from 'argon2';
 
 @Injectable()
 export class AuthService {
@@ -18,7 +18,7 @@ export class AuthService {
       throw new HttpException('User already exists', 409);
     }
 
-    const hashedPassword = await hash(password);
+    const hashedPassword = await argon2.hash(password);
 
     const user = this.prisma.user.create({
       data: {
@@ -29,4 +29,5 @@ export class AuthService {
 
     return user;
   }
+  signIn() {}
 }
