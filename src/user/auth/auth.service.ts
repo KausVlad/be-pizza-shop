@@ -8,6 +8,9 @@ import { ConfigType } from '@nestjs/config';
 import jwtConfig from './config/jwt.config';
 import { User } from '@prisma/client';
 import { IActiveUserData } from '../interfaces/active-user-data.interface';
+import { randomUUID } from 'crypto';
+import { IRefreshTokenId } from '../interfaces/refresh-token-id.interface';
+import { RefreshTokenIdsStorage } from './refresh-token-ids.storage';
 
 @Injectable()
 export class AuthService {
@@ -16,6 +19,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
+    private readonly refreshTokenIdsStorage: RefreshTokenIdsStorage,
   ) {}
 
   async signUp({ password, ...userData }: SignUpDto) {
@@ -65,14 +69,24 @@ export class AuthService {
   }
 
   private async generateTokens(user: User) {
+    const refreshTokenId = randomUUID();
+
     const [accessToken, refreshToken] = await Promise.all([
       this.signToken<Partial<IActiveUserData>>(
         user.id,
         this.jwtConfiguration.accessExpiresIn,
         { email: user.email, role: user.role },
       ),
-      this.signToken(user.id, this.jwtConfiguration.refreshExpiresIn),
+      this.signToken<IRefreshTokenId>(
+        user.id,
+        this.jwtConfiguration.refreshExpiresIn,
+        {
+          refreshTokenId,
+        },
+      ),
     ]);
+
+    await this.refreshTokenIdsStorage.insert(user.id, refreshTokenId);
 
     return { accessToken, refreshToken };
   }

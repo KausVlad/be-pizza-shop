@@ -6,6 +6,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import jwtConfig from './auth/config/jwt.config';
+import { RefreshTokenIdsStorage } from './auth/refresh-token-ids.storage';
 
 @Module({
   imports: [
@@ -13,7 +14,7 @@ import jwtConfig from './auth/config/jwt.config';
     ConfigModule.forFeature(jwtConfig),
     PrismaModule,
   ],
-  providers: [AuthService, PrismaService],
+  providers: [RefreshTokenIdsStorage, AuthService, PrismaService],
   controllers: [AuthController],
 })
 export class UserModule {}

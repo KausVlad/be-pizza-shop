@@ -13,7 +13,9 @@ export class RefreshTokenIdsStorage
   implements OnApplicationBootstrap, OnApplicationShutdown
 {
   constructor(private readonly configService: ConfigService) {}
+
   private redisClient: Redis;
+
   onApplicationBootstrap() {
     this.redisClient = new Redis(this.configService.get('REDIS_URL'));
   }
