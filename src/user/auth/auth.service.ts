@@ -31,14 +31,14 @@ export class AuthService {
 
     const hashedPassword = await argon2.hash(password);
 
-    const user = this.prisma.user.create({
+    const user = await this.prisma.user.create({
       data: {
         ...userData,
         passwordHash: hashedPassword,
       },
     });
 
-    return user;
+    return this.generateTokens(user);
   }
   async signIn(signInDto: SignInDto) {
     const user = await this.prisma.user.findFirst({
