@@ -63,9 +63,7 @@ export class AuthService {
       throw new HttpException('Invalid credentials', 401);
     }
 
-    const { accessToken, refreshToken } = await this.generateTokens(user);
-
-    return { accessToken, refreshToken };
+    return this.generateTokens(user);
   }
 
   private async generateTokens(user: User) {
@@ -87,7 +85,6 @@ export class AuthService {
     ]);
 
     await this.refreshTokenIdsStorage.insert(user.id, refreshTokenId);
-
     return { accessToken, refreshToken };
   }
 
