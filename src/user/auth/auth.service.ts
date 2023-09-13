@@ -1,4 +1,9 @@
-import { HttpException, Inject, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { SignUpDto } from '../dto/signUp.dto';
 import * as argon2 from 'argon2';
@@ -10,7 +15,11 @@ import { User } from '@prisma/client';
 import { IActiveUserData } from '../interfaces/active-user-data.interface';
 import { randomUUID } from 'crypto';
 import { IRefreshTokenId } from '../interfaces/refresh-token-id.interface';
-import { RefreshTokenIdsStorage } from './refresh-token-ids.storage';
+import {
+  RefreshTokenIdsStorage,
+  invalidatedRefreshTokenError,
+} from './refresh-token-ids.storage';
+import { RefreshTokenDto } from '../dto/refresh-token.dto';
 
 @Injectable()
 export class AuthService {
@@ -64,6 +73,41 @@ export class AuthService {
     }
 
     return this.generateTokens(user);
+  }
+
+  async refreshTokens(refreshTokenDto: RefreshTokenDto) {
+    try {
+      const { sub, refreshTokenId } = await this.jwtService.verifyAsync<
+        Pick<IActiveUserData, 'sub'> & IRefreshTokenId
+      >(refreshTokenDto.refreshToken, {
+        secret: this.jwtConfiguration.secret,
+        audience: this.jwtConfiguration.audience,
+        issuer: this.jwtConfiguration.issuer,
+      });
+
+      const user = await this.prisma.user.findFirstOrThrow({
+        where: {
+          id: sub,
+        },
+      });
+
+      const isValid = await this.refreshTokenIdsStorage.validate(
+        user.id,
+        refreshTokenId,
+      );
+      if (isValid) {
+        await this.refreshTokenIdsStorage.invalidate(user.id);
+      } else {
+        throw new UnauthorizedException('Invalid refresh token');
+      }
+
+      return this.generateTokens(user);
+    } catch (error) {
+      if (error instanceof invalidatedRefreshTokenError) {
+        throw new UnauthorizedException('Access denied');
+      }
+      throw new UnauthorizedException(error);
+    }
   }
 
   private async generateTokens(user: User) {
