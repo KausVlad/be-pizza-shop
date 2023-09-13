@@ -4,6 +4,7 @@ import { Request } from 'express';
 export const GetRefreshTokenCookie = createParamDecorator(
   (data: string, ctx: ExecutionContext) => {
     const request = ctx.switchToHttp().getRequest<Request>();
-    return data ? request.cookies[data] : request.cookies;
+    const refreshToken = data ? request.cookies?.[data] : request.cookies;
+    return { refreshToken };
   },
 );

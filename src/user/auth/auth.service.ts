@@ -95,6 +95,7 @@ export class AuthService {
         user.id,
         refreshTokenId,
       );
+
       if (isValid) {
         await this.refreshTokenIdsStorage.invalidate(user.id);
       } else {
