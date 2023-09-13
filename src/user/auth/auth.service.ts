@@ -1,3 +1,4 @@
+import { RefreshTokenDto } from 'src/user/dto/refresh-token.dto';
 import {
   HttpException,
   Inject,
@@ -19,7 +20,6 @@ import {
   RefreshTokenIdsStorage,
   invalidatedRefreshTokenError,
 } from './refresh-token-ids.storage';
-import { RefreshTokenDto } from '../dto/refresh-token.dto';
 
 @Injectable()
 export class AuthService {
@@ -77,30 +77,7 @@ export class AuthService {
 
   async refreshTokens(refreshTokenDto: RefreshTokenDto) {
     try {
-      const { sub, refreshTokenId } = await this.jwtService.verifyAsync<
-        Pick<IActiveUserData, 'sub'> & IRefreshTokenId
-      >(refreshTokenDto.refreshToken, {
-        secret: this.jwtConfiguration.secret,
-        audience: this.jwtConfiguration.audience,
-        issuer: this.jwtConfiguration.issuer,
-      });
-
-      const user = await this.prisma.user.findFirstOrThrow({
-        where: {
-          id: sub,
-        },
-      });
-
-      const isValid = await this.refreshTokenIdsStorage.validate(
-        user.id,
-        refreshTokenId,
-      );
-
-      if (isValid) {
-        await this.refreshTokenIdsStorage.invalidate(user.id);
-      } else {
-        throw new UnauthorizedException('Invalid refresh token');
-      }
+      const user = await this.rotateRefreshToken(refreshTokenDto);
 
       return this.generateTokens(user);
     } catch (error) {
@@ -109,6 +86,43 @@ export class AuthService {
       }
       throw new UnauthorizedException(error);
     }
+  }
+
+  async signOut(refreshTokenDto: RefreshTokenDto) {
+    try {
+      await this.rotateRefreshToken(refreshTokenDto);
+    } catch (error) {
+      return error;
+    }
+  }
+
+  private async rotateRefreshToken(refreshTokenDto: RefreshTokenDto) {
+    const { sub, refreshTokenId } = await this.jwtService.verifyAsync<
+      Pick<IActiveUserData, 'sub'> & IRefreshTokenId
+    >(refreshTokenDto.refreshToken, {
+      secret: this.jwtConfiguration.secret,
+      audience: this.jwtConfiguration.audience,
+      issuer: this.jwtConfiguration.issuer,
+    });
+
+    const user = await this.prisma.user.findFirstOrThrow({
+      where: {
+        id: sub,
+      },
+    });
+
+    const isValid = await this.refreshTokenIdsStorage.validate(
+      user.id,
+      refreshTokenId,
+    );
+
+    if (isValid) {
+      await this.refreshTokenIdsStorage.invalidate(user.id);
+    } else {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    return user;
   }
 
   private async generateTokens(user: User) {

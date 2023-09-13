@@ -1,4 +1,13 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { Response } from 'express';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Res,
+} from '@nestjs/common';
 import { SignUpDto } from '../dto/signUp.dto';
 import { AuthService } from './auth.service';
 import { SignInDto } from '../dto/signIn.dto';
@@ -19,7 +28,7 @@ export class AuthController {
   ) {
     const { accessToken, refreshToken } = await this.authService.signUp(signUp);
     setRefreshTokenCookie(refreshToken);
-    return accessToken;
+    return { accessToken };
   }
 
   @HttpCode(HttpStatus.OK)
@@ -31,14 +40,29 @@ export class AuthController {
   ) {
     const { accessToken, refreshToken } = await this.authService.signIn(signIn);
     setRefreshTokenCookie(refreshToken);
-    return accessToken;
+    return { accessToken };
   }
 
   @HttpCode(HttpStatus.OK)
   @Post('refreshTokens')
-  refreshTokens(
-    @GetRefreshTokenCookie('refreshToken') refreshToken: RefreshTokenDto,
+  async refreshTokens(
+    @GetRefreshTokenCookie('refreshToken') refreshTokenDto: RefreshTokenDto,
+    @SetRefreshTokenCookie()
+    setRefreshTokenCookie: ISetRefreshTokenCookie,
   ) {
-    return this.authService.refreshTokens(refreshToken);
+    const { accessToken, refreshToken } =
+      await this.authService.refreshTokens(refreshTokenDto);
+    setRefreshTokenCookie(refreshToken);
+    return { accessToken };
+  }
+
+  @Get('signOut')
+  async signOut(
+    @Res() res: Response,
+    @GetRefreshTokenCookie('refreshToken') refreshTokenDto: RefreshTokenDto,
+  ) {
+    await this.authService.signOut(refreshTokenDto);
+    res.clearCookie('refreshToken');
+    return res.status(HttpStatus.OK).send('Logged out successfully');
   }
 }
