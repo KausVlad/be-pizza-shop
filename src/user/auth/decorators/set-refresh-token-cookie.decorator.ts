@@ -8,7 +8,7 @@ export const SetRefreshTokenCookie = createParamDecorator(
       const refreshCookie = cookie.serialize('refreshToken', refreshToken, {
         httpOnly: true,
         sameSite: true,
-        secure: false, // TODO
+        secure: false, //TODO change to true
       });
 
       response.setHeader('Set-Cookie', refreshCookie);
