@@ -9,6 +9,7 @@ import jwtConfig from './auth/config/jwt.config';
 import { RefreshTokenIdsStorage } from './auth/refresh-token-ids.storage';
 import { APP_GUARD } from '@nestjs/core';
 import { AccessTokenGuard } from './auth/guards/access-token.guard';
+import { AuthenticationGuard } from './auth/guards/authentication.guard';
 
 @Module({
   imports: [
@@ -20,9 +21,10 @@ import { AccessTokenGuard } from './auth/guards/access-token.guard';
     RefreshTokenIdsStorage,
     AuthService,
     PrismaService,
+    AccessTokenGuard,
     {
       provide: APP_GUARD,
-      useClass: AccessTokenGuard,
+      useClass: AuthenticationGuard,
     },
   ],
   controllers: [AuthController],

@@ -1,4 +1,4 @@
-import { RefreshTokenDto } from 'src/user/dto/refresh-token.dto';
+import { RefreshTokenDto } from 'src/user/auth/dto/refresh-token.dto';
 import {
   HttpException,
   Inject,
@@ -6,9 +6,9 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { SignUpDto } from '../dto/signUp.dto';
+import { SignUpDto } from './dto/signUp.dto';
 import * as argon2 from 'argon2';
-import { SignInDto } from '../dto/signIn.dto';
+import { SignInDto } from './dto/signIn.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigType } from '@nestjs/config';
 import jwtConfig from './config/jwt.config';

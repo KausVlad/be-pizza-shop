@@ -8,14 +8,17 @@ import {
   Post,
   Res,
 } from '@nestjs/common';
-import { SignUpDto } from '../dto/signUp.dto';
+import { SignUpDto } from './dto/signUp.dto';
 import { AuthService } from './auth.service';
-import { SignInDto } from '../dto/signIn.dto';
+import { SignInDto } from './dto/signIn.dto';
 import { SetRefreshTokenCookie } from './decorators/set-refresh-token-cookie.decorator';
 import { ISetRefreshTokenCookie } from '../interfaces/set-refresh-token-cookie.interface';
-import { RefreshTokenDto } from '../dto/refresh-token.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { GetRefreshTokenCookie } from './decorators/get-refresh-token-cookie.decorator';
+import { Auth } from './decorators/auth.decorator';
+import { EnumAuthType } from './enums/auth-type.enum';
 
+@Auth(EnumAuthType.None)
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
