@@ -5,7 +5,7 @@ import { PrismaModule } from 'src/prisma/prisma.module';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import jwtConfig from './auth/config/jwt.config';
+import jwtConfig from './config/jwt.config';
 import { RefreshTokenIdsStorage } from './auth/refresh-token-ids.storage';
 import { APP_GUARD } from '@nestjs/core';
 import { AccessTokenGuard } from './auth/guards/access-token.guard';

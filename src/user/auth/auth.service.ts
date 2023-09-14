@@ -11,7 +11,7 @@ import * as argon2 from 'argon2';
 import { SignInDto } from './dto/signIn.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigType } from '@nestjs/config';
-import jwtConfig from './config/jwt.config';
+import jwtConfig from '../config/jwt.config';
 import { User } from '@prisma/client';
 import { IActiveUserData } from '../interfaces/active-user-data.interface';
 import { randomUUID } from 'crypto';
