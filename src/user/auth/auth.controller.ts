@@ -17,6 +17,9 @@ import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { GetRefreshTokenCookie } from './decorators/get-refresh-token-cookie.decorator';
 import { Auth } from './decorators/auth.decorator';
 import { EnumAuthType } from './enums/auth-type.enum';
+import { newRoleForUserDto } from './dto/new-role-for-user.dto';
+import { Roles } from '../authorization/decorators/roles.decorator';
+import { EnumRole } from '@prisma/client';
 
 @Auth(EnumAuthType.None)
 @Controller('auth')
@@ -69,6 +72,10 @@ export class AuthController {
     return res.status(HttpStatus.OK).send('Logged out successfully');
   }
 
+  @Auth(EnumAuthType.Bearer)
+  @Roles(EnumRole.ADMIN)
   @Post('role')
-  changeRole(@Body() newRoleForUser: newRoleForUserDto) {}
+  changeRole(@Body() newRoleForUser: newRoleForUserDto) {
+    this.authService.changeRole(newRoleForUser);
+  }
 }
