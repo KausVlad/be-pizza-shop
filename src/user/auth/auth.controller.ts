@@ -8,9 +8,9 @@ import {
   Post,
   Res,
 } from '@nestjs/common';
-import { SignUpDto } from './dto/signUp.dto';
+import { SignUpDto } from './dto/sign-up.dto';
 import { AuthService } from './auth.service';
-import { SignInDto } from './dto/signIn.dto';
+import { SignInDto } from './dto/sign-In.dto';
 import { SetRefreshTokenCookie } from './decorators/set-refresh-token-cookie.decorator';
 import { ISetRefreshTokenCookie } from '../interfaces/set-refresh-token-cookie.interface';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
@@ -68,4 +68,7 @@ export class AuthController {
     res.clearCookie('refreshToken');
     return res.status(HttpStatus.OK).send('Logged out successfully');
   }
+
+  @Post('role')
+  changeRole(@Body() newRoleForUser: newRoleForUserDto) {}
 }

@@ -6,9 +6,9 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { SignUpDto } from './dto/signUp.dto';
+import { SignUpDto } from './dto/sign-up.dto';
 import * as argon2 from 'argon2';
-import { SignInDto } from './dto/signIn.dto';
+import { SignInDto } from './dto/sign-In.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigType } from '@nestjs/config';
 import jwtConfig from '../config/jwt.config';
