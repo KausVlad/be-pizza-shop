@@ -72,10 +72,11 @@ export class AuthController {
     return res.status(HttpStatus.OK).send('Logged out successfully');
   }
 
+  @HttpCode(HttpStatus.OK)
   @Auth(EnumAuthType.Bearer)
   @Roles(EnumRole.ADMIN)
   @Post('role')
   changeRole(@Body() newRoleForUser: newRoleForUserDto) {
-    this.authService.changeRole(newRoleForUser);
+    return this.authService.changeRole(newRoleForUser);
   }
 }

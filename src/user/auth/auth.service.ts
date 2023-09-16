@@ -20,6 +20,7 @@ import {
   RefreshTokenIdsStorage,
   invalidatedRefreshTokenError,
 } from './refresh-token-ids.storage';
+import { newRoleForUserDto } from './dto/new-role-for-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -93,6 +94,30 @@ export class AuthService {
       await this.rotateRefreshToken(refreshTokenDto);
     } catch (error) {
       return error;
+    }
+  }
+
+  async changeRole(newRoleForUser: newRoleForUserDto) {
+    const uniqueUserCheck = await this.prisma.user.count({
+      where: {
+        email: newRoleForUser.email,
+      },
+    });
+    if (!uniqueUserCheck) {
+      throw new HttpException('User not found', 404);
+    }
+    const updatedUser = await this.prisma.user.update({
+      where: {
+        email: newRoleForUser.email,
+      },
+      data: {
+        role: newRoleForUser.role,
+      },
+    });
+    if (updatedUser) {
+      return {
+        message: `User ${updatedUser.email} role changed to ${updatedUser.role}`,
+      };
     }
   }
 
