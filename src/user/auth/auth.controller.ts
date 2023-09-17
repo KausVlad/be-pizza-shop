@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Patch,
   Post,
   Res,
 } from '@nestjs/common';
@@ -75,7 +76,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Auth(EnumAuthType.Bearer)
   @Roles(EnumRole.ADMIN)
-  @Post('role')
+  @Patch('role')
   changeRole(@Body() newRoleForUser: newRoleForUserDto) {
     return this.authService.changeRole(newRoleForUser);
   }
