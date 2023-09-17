@@ -36,3 +36,28 @@ model User {
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 }
+
+model Pizza {
+  id             Int            @id @default(autoincrement())
+  name           String
+  createdAt      DateTime       @default(now()) @map("created_at")
+  updatedAt      DateTime       @updatedAt @map("updated_at")
+  sizes          EnumPizzaSize
+  weightStandard Int            @map("weight_standard")
+  priceStandard  Int            @map("price_standard")
+  doughCrust     EnumDoughCrust @map("dough_crust")
+}
+
+enum EnumPizzaSize {
+  SMALL
+  STANDARD
+  LARGE
+  EXTRA_LARGE
+}
+
+enum EnumDoughCrust {
+  THIN
+  THICK_CRUST
+  PHILADELPHIA
+  HOT_DOG_CRUST
+}
