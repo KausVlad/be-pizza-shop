@@ -1,4 +1,4 @@
-import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { Auth } from 'src/user/auth/decorators/auth.decorator';
 import { EnumAuthType } from 'src/user/auth/enums/auth-type.enum';
 import { PizzaService } from './pizza.service';
