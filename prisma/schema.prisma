@@ -38,14 +38,23 @@ model User {
 }
 
 model Pizza {
-  id             Int            @id @default(autoincrement())
-  name           String
-  createdAt      DateTime       @default(now()) @map("created_at")
-  updatedAt      DateTime       @updatedAt @map("updated_at")
-  sizes          EnumPizzaSize
-  weightStandard Int            @map("weight_standard")
-  priceStandard  Int            @map("price_standard")
-  doughCrust     EnumDoughCrust @map("dough_crust")
+  id              Int               @id @default(autoincrement())
+  name            String
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+  sizes           EnumPizzaSize     @default(STANDARD)
+  weightStandard  Int               @map("weight_standard")
+  priceStandard   Int               @map("price_standard")
+  doughCrust      EnumDoughCrust    @default(THICK_CRUST) @map("dough_crust")
+  ingredients     String[]
+  PizzaAttributes PizzaAttributes[]
+}
+
+model PizzaAttributes {
+  id         Int    @id @default(autoincrement())
+  attributes String
+  Pizza      Pizza? @relation(fields: [pizzaId], references: [id])
+  pizzaId    Int?
 }
 
 enum EnumPizzaSize {
