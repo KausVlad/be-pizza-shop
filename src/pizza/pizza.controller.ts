@@ -1,14 +1,22 @@
 import { Controller, Get } from '@nestjs/common';
-import { Roles } from 'src/user/authorization/decorators/roles.decorator';
-import { ActiveUser } from 'src/user/decorators/active-user.decorator';
-import { IActiveUserData } from 'src/user/interfaces/active-user-data.interface';
+import { Auth } from 'src/user/auth/decorators/auth.decorator';
+import { EnumAuthType } from 'src/user/auth/enums/auth-type.enum';
+import { PizzaService } from './pizza.service';
 
+@Auth(EnumAuthType.None)
 @Controller('pizza')
 export class PizzaController {
-  @Roles('ADMIN', 'MANAGER')
-  @Get('info')
-  getPizza(@ActiveUser() user: IActiveUserData): string {
-    console.log(user);
-    return 'pizza';
+  constructor(private readonly pizzaService: PizzaService) {}
+
+  // @Roles('ADMIN', 'MANAGER')
+  // @Get('info')
+  // getPizza(@ActiveUser() user: IActiveUserData): string {
+  //   console.log(user);
+  //   return 'pizza';
+  // }
+
+  @Get('pizzas')
+  getPizzas() {
+    return this.pizzaService.getPizzas();
   }
 }
