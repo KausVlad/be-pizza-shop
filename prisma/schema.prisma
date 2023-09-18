@@ -22,6 +22,27 @@ enum EnumSex {
   OTHER
 }
 
+enum EnumPizzaSize {
+  SMALL
+  STANDARD
+  LARGE
+  HUGE
+}
+
+enum EnumDoughCrust {
+  THIN
+  THICK_CRUST
+  PHILADELPHIA
+  HOT_DOG_CRUST
+}
+
+enum EnumPizzaIngredientGroup {
+  VEGETABLE
+  CHEESE
+  MEAT
+  SAUCE
+}
+
 model User {
   id           Int      @id @default(autoincrement())
   userPhoto    String?  @map("user_photo")
@@ -39,34 +60,26 @@ model User {
 
 model Pizza {
   id              Int               @id @default(autoincrement())
-  name            String
+  name            String            @unique
   createdAt       DateTime          @default(now()) @map("created_at")
   updatedAt       DateTime          @updatedAt @map("updated_at")
   sizes           EnumPizzaSize     @default(STANDARD)
   weightStandard  Int               @map("weight_standard")
   priceStandard   Int               @map("price_standard")
   doughCrust      EnumDoughCrust    @default(THICK_CRUST) @map("dough_crust")
-  ingredients     String[]
-  PizzaAttributes PizzaAttributes[]
+  pizzaAttributes PizzaAttributes[]
+  ingredients     Ingredient[]
 }
 
 model PizzaAttributes {
-  id         Int    @id @default(autoincrement())
+  id         Int     @id @default(autoincrement())
   attributes String
-  Pizza      Pizza? @relation(fields: [pizzaId], references: [id])
-  pizzaId    Int?
+  pizzas     Pizza[]
 }
 
-enum EnumPizzaSize {
-  SMALL
-  STANDARD
-  LARGE
-  EXTRA_LARGE
-}
-
-enum EnumDoughCrust {
-  THIN
-  THICK_CRUST
-  PHILADELPHIA
-  HOT_DOG_CRUST
+model Ingredient {
+  id              Int                      @id @default(autoincrement())
+  ingredientName  String                   @unique @map("ingredient_name")
+  ingredientGroup EnumPizzaIngredientGroup @map("ingredient_group")
+  pizzas          Pizza[]
 }
