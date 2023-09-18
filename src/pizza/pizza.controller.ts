@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { Auth } from 'src/user/auth/decorators/auth.decorator';
 import { EnumAuthType } from 'src/user/auth/enums/auth-type.enum';
 import { PizzaService } from './pizza.service';
@@ -18,5 +18,10 @@ export class PizzaController {
   @Get('pizzas')
   getPizzas() {
     return this.pizzaService.getPizzas();
+  }
+
+  @Get('pizza/:id')
+  getPizza(@Param('id') id: number) {
+    return this.pizzaService.getPizza(id);
   }
 }
