@@ -1,6 +1,6 @@
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { IngredientDto } from './dto/ingredient-dto';
+import { IngredientsDto } from './dto/ingredients-dto';
 
 @Injectable()
 export class PizzaService {
@@ -39,7 +39,7 @@ export class PizzaService {
     return pizza;
   }
 
-  async addIngredients({ ingredientGroup, ingredientsName }: IngredientDto) {
+  async addIngredients({ ingredientGroup, ingredientsName }: IngredientsDto) {
     for (const ingredient of ingredientsName) {
       const foundIngredient = await this.prisma.ingredient.findFirst({
         where: {
@@ -65,5 +65,54 @@ export class PizzaService {
     } catch (error) {
       return error;
     }
+  }
+
+  // async deleteIngredient(ingredient: string) {
+  //   const existingIngredient = await this.prisma.ingredient.count({
+  //     where: {
+  //       ingredientName: ingredient,
+  //     },
+  //   });
+
+  //   if (!existingIngredient) {
+  //     throw new HttpException(
+  //       `Ingredient with name '${ingredient}' not found.`,
+  //       409,
+  //     );
+  //   }
+
+  //   const deleteIngredient = await this.prisma.ingredient.delete({
+  //     where: {
+  //       ingredientName: ingredient,
+  //     },
+  //   });
+  //   return `Ingredient with name '${deleteIngredient}' was successfully deleted.`;
+  // }
+
+  async deleteIngredient(ingredient: string) {
+    return this.prisma.$transaction(async (prisma) => {
+      const existingIngredient = await prisma.ingredient.findUnique({
+        where: {
+          ingredientName: ingredient,
+        },
+      });
+
+      if (!existingIngredient) {
+        throw new HttpException(
+          `Ingredient with name '${ingredient}' not found.`,
+          409,
+        );
+      }
+
+      await prisma.ingredient.delete({
+        where: {
+          ingredientName: ingredient,
+        },
+      });
+
+      return {
+        message: `Ingredient with name '${ingredient}' was successfully deleted.`,
+      };
+    });
   }
 }
