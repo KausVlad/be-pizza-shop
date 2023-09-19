@@ -1,5 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { IngredientDto } from './dto/ingredient-dto';
 
 @Injectable()
 export class PizzaService {
@@ -36,5 +37,33 @@ export class PizzaService {
       throw new NotFoundException(`Pizza with id ${id} not found`);
     }
     return pizza;
+  }
+
+  async addIngredients({ ingredientGroup, ingredientsName }: IngredientDto) {
+    for (const ingredient of ingredientsName) {
+      const foundIngredient = await this.prisma.ingredient.findFirst({
+        where: {
+          ingredientName: ingredient,
+        },
+      });
+      if (foundIngredient) {
+        throw new HttpException(
+          `Ingredient ${foundIngredient.ingredientName} already exists`,
+          409,
+        );
+      }
+    }
+
+    try {
+      await this.prisma.ingredient.createMany({
+        data: ingredientsName.map((ingredient) => ({
+          ingredientName: ingredient,
+          ingredientGroup,
+        })),
+        skipDuplicates: true,
+      });
+    } catch (error) {
+      return error;
+    }
   }
 }

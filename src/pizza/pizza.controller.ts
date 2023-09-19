@@ -1,8 +1,9 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { Auth } from 'src/user/auth/decorators/auth.decorator';
 import { EnumAuthType } from 'src/user/auth/enums/auth-type.enum';
 import { PizzaService } from './pizza.service';
 import { PizzaIdDto } from './dto/pizza-id.dto';
+import { IngredientDto } from './dto/ingredient-dto';
 
 @Auth(EnumAuthType.None)
 @Controller('pizza')
@@ -24,5 +25,15 @@ export class PizzaController {
   @Get('/:id')
   getPizza(@Param() params: PizzaIdDto) {
     return this.pizzaService.getPizza(params.id);
+  }
+
+  // @Post('add')
+  // addPizza(@Body() body: string) {
+  //   return this.pizzaService.addPizza();
+  // }
+
+  @Post('ingredients')
+  addIngredients(@Body() ingredient: IngredientDto) {
+    return this.pizzaService.addIngredients(ingredient);
   }
 }

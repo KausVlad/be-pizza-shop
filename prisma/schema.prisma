@@ -73,13 +73,13 @@ model Pizza {
 
 model PizzaAttributes {
   id         Int     @id @default(autoincrement())
-  attributes String
+  attributes String  @unique
   pizzas     Pizza[]
 }
 
 model Ingredient {
   id              Int                      @id @default(autoincrement())
-  ingredientName  String                   @unique @map("ingredient_name")
+  ingredientsName String                   @unique @map("ingredient_name")
   ingredientGroup EnumPizzaIngredientGroup @map("ingredient_group")
   pizzas          Pizza[]
 }
