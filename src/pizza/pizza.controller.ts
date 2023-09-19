@@ -1,9 +1,8 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { Auth } from 'src/user/auth/decorators/auth.decorator';
 import { EnumAuthType } from 'src/user/auth/enums/auth-type.enum';
 import { PizzaService } from './pizza.service';
 import { PizzaIdDto } from './dto/pizza-id.dto';
-import { IngredientsDto } from './dto/ingredients-dto';
 
 @Auth(EnumAuthType.None)
 @Controller('pizza')
@@ -31,15 +30,4 @@ export class PizzaController {
   // addPizza(@Body() body: string) {
   //   return this.pizzaService.addPizza();
   // }
-
-  @Post('ingredients')
-  addIngredients(@Body() ingredient: IngredientsDto) {
-    return this.pizzaService.addIngredients(ingredient);
-  }
-
-  @Delete('ingredients/:ingredientName')
-  deleteIngredient(@Param('ingredientName') ingredientName: string) {
-    console.log(ingredientName);
-    return this.pizzaService.deleteIngredient(ingredientName);
-  }
 }
