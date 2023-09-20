@@ -65,7 +65,7 @@ export class IngredientService {
       });
 
       return {
-        message: `Ingredient with name '${ingredient}' was successfully deleted.`,
+        message: `Ingredient '${ingredient}' was successfully deleted.`,
       };
     });
   }

@@ -108,4 +108,28 @@ export class PizzaService {
       });
     });
   }
+
+  async deletePizza(id: number) {
+    return this.prisma.$transaction(async (prisma) => {
+      const existingPizza = await prisma.pizza.count({
+        where: {
+          id,
+        },
+      });
+
+      if (!existingPizza) {
+        throw new NotFoundException(`Pizza with id ${id} not found`);
+      }
+
+      const deletedPizza = await prisma.pizza.delete({
+        where: {
+          id,
+        },
+      });
+
+      return {
+        message: `Pizza ${deletedPizza.pizzaName} was successfully deleted`,
+      };
+    });
+  }
 }
