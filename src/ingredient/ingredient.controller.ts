@@ -1,10 +1,19 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { IngredientService } from './ingredient.service';
-import { IngredientsDto } from './dto/ingredients-dto';
+import { IngredientsDto } from './dto/ingredients.dto';
 import { Auth } from 'src/user/auth/decorators/auth.decorator';
 import { EnumAuthType } from 'src/user/auth/enums/auth-type.enum';
-import { EnumRole } from '@prisma/client';
+import { EnumPizzaIngredientGroup, EnumRole } from '@prisma/client';
 import { Roles } from 'src/user/authorization/decorators/roles.decorator';
+import { IngredientFilterDto } from './dto/ingredient-filter.dto';
 
 @Controller('ingredient')
 export class IngredientController {
@@ -12,8 +21,8 @@ export class IngredientController {
 
   @Auth(EnumAuthType.None)
   @Get('all')
-  getIngredients() {
-    return this.ingredientService.getIngredients();
+  getIngredients(@Query() { ingredientGroup }: IngredientFilterDto) {
+    return this.ingredientService.getIngredients(ingredientGroup);
   }
 
   @Roles(EnumRole.ADMIN, EnumRole.MANAGER)
@@ -25,7 +34,6 @@ export class IngredientController {
   @Roles(EnumRole.ADMIN, EnumRole.MANAGER)
   @Delete('/:ingredientName')
   deleteIngredient(@Param('ingredientName') ingredientName: string) {
-    console.log(ingredientName);
     return this.ingredientService.deleteIngredient(ingredientName);
   }
 }

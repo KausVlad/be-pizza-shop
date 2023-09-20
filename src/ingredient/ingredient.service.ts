@@ -1,13 +1,18 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { IngredientsDto } from './dto/ingredients-dto';
+import { IngredientsDto } from './dto/ingredients.dto';
+import { EnumPizzaIngredientGroup } from '@prisma/client';
 
 @Injectable()
 export class IngredientService {
   constructor(private readonly prisma: PrismaService) {}
 
-  getIngredients() {
-    return this.prisma.ingredient.findMany();
+  getIngredients(ingredientGroup: EnumPizzaIngredientGroup) {
+    return this.prisma.ingredient.findMany({
+      where: {
+        ingredientGroup,
+      },
+    });
   }
 
   async addIngredients({ ingredientGroup, ingredientsName }: IngredientsDto) {
