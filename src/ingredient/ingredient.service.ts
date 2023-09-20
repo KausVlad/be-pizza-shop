@@ -69,4 +69,29 @@ export class IngredientService {
       };
     });
   }
+
+  async updateIngredient(ingredientName: string, newIngredientName: string) {
+    return this.prisma.$transaction(async (prisma) => {
+      const ingredientToUpdate = await prisma.ingredient.count({
+        where: {
+          ingredientName,
+        },
+      });
+      if (!ingredientToUpdate) {
+        throw new HttpException(
+          `Ingredient with name '${ingredientName}' not found.`,
+          409,
+        );
+      }
+      const updatedIngredient = await prisma.ingredient.update({
+        where: {
+          ingredientName,
+        },
+        data: {
+          ingredientName: newIngredientName,
+        },
+      });
+      return updatedIngredient;
+    });
+  }
 }
