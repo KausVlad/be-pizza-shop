@@ -1,4 +1,5 @@
-import { IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
+import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
+import { EnumPizzaSortOrder } from '../enum/pizza-sort-order.enum';
 
 export class FiltersPizzaDto {
   @IsOptional()
@@ -20,4 +21,8 @@ export class FiltersPizzaDto {
   @Max(10000)
   @Min(1)
   maxPrice?: number;
+
+  @IsOptional()
+  @IsEnum(EnumPizzaSortOrder)
+  pizzaSortOrder?: EnumPizzaSortOrder;
 }

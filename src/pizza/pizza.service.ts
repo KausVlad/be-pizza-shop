@@ -27,6 +27,7 @@ export class PizzaService {
     pizzaAttributes,
     maxPrice,
     minPrice,
+    pizzaSortOrder,
   }: FiltersPizzaDto) {
     try {
       const ingredientNameArray = ingredientName
@@ -39,6 +40,9 @@ export class PizzaService {
         : undefined;
 
       const pizzas = await this.prisma.pizza.findMany({
+        orderBy: {
+          priceStandard: pizzaSortOrder,
+        },
         where: {
           priceStandard: {
             gte: minPrice,
@@ -64,6 +68,7 @@ export class PizzaService {
           pizzaAttributes: true,
         },
       });
+
       if (!pizzas) {
         throw new NotFoundException('Pizzas not found');
       }
