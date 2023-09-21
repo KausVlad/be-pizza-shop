@@ -27,11 +27,13 @@ export class PizzaService {
       const ingredientNameArray = ingredientName
         ? ingredientName.split(',')
         : undefined;
-      const pizzaAttributesArray: EnumPizzaAttributeName[] = pizzaAttributes
+      const pizzaAttributesArray = pizzaAttributes
         ? pizzaAttributes
             .split(',')
             .map((item) => item as EnumPizzaAttributeName)
-        : [];
+        : undefined;
+
+      console.log({ ingredientNameArray, pizzaAttributesArray });
 
       const pizzas = await this.prisma.pizza.findMany({
         where: {
