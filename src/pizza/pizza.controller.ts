@@ -52,6 +52,8 @@ export class PizzaController {
     return this.pizzaService.deletePizza(param.id);
   }
 
+  @Auth(EnumAuthType.Bearer)
+  @Roles(EnumRole.ADMIN, EnumRole.MANAGER)
   @Patch('/:id')
   updatePizza(@Param() param: PizzaIdDto, @Body() body: UpdatePizzaDto) {
     console.log(param, body);

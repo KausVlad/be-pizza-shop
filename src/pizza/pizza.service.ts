@@ -34,7 +34,7 @@ export class PizzaService {
       }
       return pizzas;
     } catch (error) {
-      return error;
+      throw error;
     }
   }
 
