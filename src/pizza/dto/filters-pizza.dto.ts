@@ -1,4 +1,4 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
 
 export class FiltersPizzaDto {
   @IsOptional()
@@ -8,4 +8,16 @@ export class FiltersPizzaDto {
   @IsOptional()
   @IsString()
   pizzaAttributes?: string;
+
+  @IsOptional()
+  @IsInt()
+  @Max(10000)
+  @Min(1)
+  minPrice?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Max(10000)
+  @Min(1)
+  maxPrice?: number;
 }

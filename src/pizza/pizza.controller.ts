@@ -32,6 +32,7 @@ export class PizzaController {
 
   @Get('all')
   getPizzas(@Query() filters: FiltersPizzaDto) {
+    console.log(filters);
     return this.pizzaService.getPizzas(filters);
   }
 

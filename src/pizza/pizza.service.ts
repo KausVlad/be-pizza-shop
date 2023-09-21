@@ -22,7 +22,12 @@ type TUpdatePizza = {
 export class PizzaService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getPizzas({ ingredientName, pizzaAttributes }: FiltersPizzaDto) {
+  async getPizzas({
+    ingredientName,
+    pizzaAttributes,
+    maxPrice,
+    minPrice,
+  }: FiltersPizzaDto) {
     try {
       const ingredientNameArray = ingredientName
         ? ingredientName.split(',')
@@ -33,10 +38,12 @@ export class PizzaService {
             .map((item) => item as EnumPizzaAttributeName)
         : undefined;
 
-      console.log({ ingredientNameArray, pizzaAttributesArray });
-
       const pizzas = await this.prisma.pizza.findMany({
         where: {
+          priceStandard: {
+            gte: minPrice,
+            lte: maxPrice,
+          },
           ingredients: {
             some: {
               ingredientName: {
