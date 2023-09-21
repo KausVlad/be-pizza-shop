@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { Auth } from 'src/user/auth/decorators/auth.decorator';
 import { EnumAuthType } from 'src/user/auth/enums/auth-type.enum';
 import { PizzaService } from './pizza.service';
@@ -6,6 +14,7 @@ import { PizzaIdDto } from './dto/pizza-id.dto';
 import { NewPizzaDto } from './dto/new-pizza.dto';
 import { Roles } from 'src/user/authorization/decorators/roles.decorator';
 import { EnumRole } from '@prisma/client';
+import { UpdatePizzaDto } from './dto/update-pizza.dto';
 
 @Auth(EnumAuthType.None)
 @Controller('pizza')
@@ -36,8 +45,16 @@ export class PizzaController {
     return this.pizzaService.addPizza(body);
   }
 
+  @Auth(EnumAuthType.Bearer)
+  @Roles(EnumRole.ADMIN, EnumRole.MANAGER)
   @Delete('/:id')
   deletePizza(@Param() param: PizzaIdDto) {
     return this.pizzaService.deletePizza(param.id);
+  }
+
+  @Patch('/:id')
+  updatePizza(@Param() param: PizzaIdDto, @Body() body: UpdatePizzaDto) {
+    console.log(param, body);
+    return this.pizzaService.updatePizza(param.id, body);
   }
 }

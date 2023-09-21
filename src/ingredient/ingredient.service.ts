@@ -1,4 +1,8 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { IngredientsDto } from './dto/ingredients.dto';
 import { EnumPizzaIngredientGroup } from '@prisma/client';
@@ -23,9 +27,8 @@ export class IngredientService {
         },
       });
       if (foundIngredient) {
-        throw new HttpException(
+        throw new ConflictException(
           `Ingredient ${foundIngredient.ingredientName} already exists`,
-          409,
         );
       }
     }
@@ -52,9 +55,8 @@ export class IngredientService {
       });
 
       if (!existingIngredient) {
-        throw new HttpException(
+        throw new NotFoundException(
           `Ingredient with name '${ingredient}' not found.`,
-          409,
         );
       }
 
@@ -78,9 +80,8 @@ export class IngredientService {
         },
       });
       if (!ingredientToUpdate) {
-        throw new HttpException(
+        throw new NotFoundException(
           `Ingredient with name '${ingredientName}' not found.`,
-          409,
         );
       }
       const updatedIngredient = await prisma.ingredient.update({

@@ -20,7 +20,7 @@ export class NewPizzaDto {
   @IsArray()
   @IsString({ each: true })
   @IsNotEmpty({ each: true })
-  ingredientsName: string[];
+  ingredients: string[];
 
   @IsArray()
   @IsString({ each: true })
