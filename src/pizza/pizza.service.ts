@@ -6,7 +6,8 @@ import {
 import { PrismaService } from 'src/prisma/prisma.service';
 import { NewPizzaDto } from './dto/new-pizza.dto';
 import { UpdatePizzaDto } from './dto/update-pizza.dto';
-import { EnumDoughCrust } from '@prisma/client';
+import { EnumDoughCrust, EnumPizzaAttributeName } from '@prisma/client';
+import { FiltersPizzaDto } from './dto/filters-pizza.dto';
 
 type TUpdatePizza = {
   pizzaName?: string;
@@ -14,23 +15,48 @@ type TUpdatePizza = {
   priceStandard?: number;
   doughCrust?: EnumDoughCrust;
   ingredients?: { set: { ingredientName: string }[] };
-  pizzaAttributes?: { set: { attributes: string }[] };
+  pizzaAttributes?: { set: { attributeName: EnumPizzaAttributeName }[] };
 };
 
 @Injectable()
 export class PizzaService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getPizzas() {
+  async getPizzas({ ingredientName, pizzaAttributes }: FiltersPizzaDto) {
     try {
+      const ingredientNameArray = ingredientName
+        ? ingredientName.split(',')
+        : undefined;
+      const pizzaAttributesArray: EnumPizzaAttributeName[] = pizzaAttributes
+        ? pizzaAttributes
+            .split(',')
+            .map((item) => item as EnumPizzaAttributeName)
+        : [];
+
       const pizzas = await this.prisma.pizza.findMany({
+        where: {
+          ingredients: {
+            some: {
+              ingredientName: {
+                in: ingredientNameArray,
+              },
+            },
+          },
+          pizzaAttributes: {
+            some: {
+              attributeName: {
+                in: pizzaAttributesArray,
+              },
+            },
+          },
+        },
         include: {
           ingredients: true,
           pizzaAttributes: true,
         },
       });
       if (!pizzas) {
-        throw new Error('Pizzas not found');
+        throw new NotFoundException('Pizzas not found');
       }
       return pizzas;
     } catch (error) {
@@ -88,7 +114,7 @@ export class PizzaService {
           },
           pizzaAttributes: {
             connect: pizzaAttributes.map((pizzaAttribute) => ({
-              attributes: pizzaAttribute,
+              attributeName: pizzaAttribute,
             })),
           },
         },
@@ -152,7 +178,7 @@ export class PizzaService {
       if (pizzaAttributes) {
         updateData.pizzaAttributes = {
           set: pizzaAttributes.map((pizzaAttribute) => ({
-            attributes: pizzaAttribute,
+            attributeName: pizzaAttribute,
           })),
         };
       }
@@ -167,18 +193,16 @@ export class PizzaService {
   }
 
   private async existingAttributesAndIngredients(
-    pizzaAttributes: string[],
+    pizzaAttributes: EnumPizzaAttributeName[],
     ingredients: string[],
   ) {
     if (pizzaAttributes) {
       for (const attributes of pizzaAttributes) {
-        const existingAttributes = await this.prisma.pizzaAttributes.findUnique(
-          {
-            where: {
-              attributes: attributes,
-            },
+        const existingAttributes = await this.prisma.pizzaAttribute.findUnique({
+          where: {
+            attributeName: attributes,
           },
-        );
+        });
         if (!existingAttributes) {
           throw new NotFoundException(
             `Attribute with name '${attributes}' not found.`,

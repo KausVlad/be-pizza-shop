@@ -43,6 +43,13 @@ enum EnumPizzaIngredientGroup {
   SAUCE
 }
 
+enum EnumPizzaAttributeName {
+  CHEESE
+  VEGETARIAN
+  SPICY
+  NEW
+}
+
 model User {
   id           Int      @id @default(autoincrement())
   userPhoto    String?  @map("user_photo")
@@ -59,22 +66,22 @@ model User {
 }
 
 model Pizza {
-  id              Int               @id @default(autoincrement())
-  pizzaName       String            @unique @map("pizza_name")
-  createdAt       DateTime          @default(now()) @map("created_at")
-  updatedAt       DateTime          @updatedAt @map("updated_at")
-  size            EnumPizzaSize     @default(STANDARD)
-  weightStandard  Int               @map("weight_standard")
-  priceStandard   Int               @map("price_standard")
-  doughCrust      EnumDoughCrust    @default(THICK_CRUST) @map("dough_crust")
-  pizzaAttributes PizzaAttributes[]
+  id              Int              @id @default(autoincrement())
+  pizzaName       String           @unique @map("pizza_name")
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+  size            EnumPizzaSize    @default(STANDARD)
+  weightStandard  Int              @map("weight_standard")
+  priceStandard   Int              @map("price_standard")
+  doughCrust      EnumDoughCrust   @default(THICK_CRUST) @map("dough_crust")
+  pizzaAttributes PizzaAttribute[]
   ingredients     Ingredient[]
 }
 
-model PizzaAttributes {
-  id         Int     @id @default(autoincrement())
-  attributes String  @unique
-  pizzas     Pizza[]
+model PizzaAttribute {
+  id            Int                    @id @default(autoincrement())
+  attributeName EnumPizzaAttributeName @unique @default(NEW) @map("attribute_name")
+  pizzas        Pizza[]
 }
 
 model Ingredient {

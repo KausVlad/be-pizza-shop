@@ -1,4 +1,4 @@
-import { EnumDoughCrust } from '@prisma/client';
+import { EnumDoughCrust, EnumPizzaAttributeName } from '@prisma/client';
 import {
   IsArray,
   IsEnum,
@@ -36,7 +36,7 @@ export class UpdatePizzaDto {
 
   @IsOptional()
   @IsArray()
-  @IsString({ each: true })
   @IsNotEmpty({ each: true })
-  pizzaAttributes?: string[];
+  @IsEnum(EnumPizzaAttributeName)
+  pizzaAttributes?: EnumPizzaAttributeName[];
 }

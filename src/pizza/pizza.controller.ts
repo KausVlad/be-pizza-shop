@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { Auth } from 'src/user/auth/decorators/auth.decorator';
 import { EnumAuthType } from 'src/user/auth/enums/auth-type.enum';
@@ -15,6 +16,7 @@ import { NewPizzaDto } from './dto/new-pizza.dto';
 import { Roles } from 'src/user/authorization/decorators/roles.decorator';
 import { EnumRole } from '@prisma/client';
 import { UpdatePizzaDto } from './dto/update-pizza.dto';
+import { FiltersPizzaDto } from './dto/filters-pizza.dto';
 
 @Auth(EnumAuthType.None)
 @Controller('pizza')
@@ -29,8 +31,9 @@ export class PizzaController {
   // }
 
   @Get('all')
-  getPizzas() {
-    return this.pizzaService.getPizzas();
+  getPizzas(@Query() filters: FiltersPizzaDto) {
+    // console.log(filters.ingredientName.split(','));
+    return this.pizzaService.getPizzas(filters);
   }
 
   @Get('/:id')
