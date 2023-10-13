@@ -32,7 +32,6 @@ export class PizzaController {
 
   @Get('all')
   getPizzas(@Query() filters: FiltersPizzaDto) {
-    console.log(filters);
     return this.pizzaService.getPizzas(filters);
   }
 
@@ -59,7 +58,6 @@ export class PizzaController {
   @Roles(EnumRole.ADMIN, EnumRole.MANAGER)
   @Patch('/:id')
   updatePizza(@Param() param: PizzaIdDto, @Body() body: UpdatePizzaDto) {
-    console.log(param, body);
     return this.pizzaService.updatePizza(param.id, body);
   }
 }
