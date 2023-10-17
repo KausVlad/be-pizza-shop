@@ -4,7 +4,13 @@ import { ValidationPipe } from '@nestjs/common';
 import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    cors: {
+      origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN : false,
+
+      credentials: true,
+    },
+  });
   app.setGlobalPrefix('pizza-api');
   app.useGlobalPipes(
     new ValidationPipe({
