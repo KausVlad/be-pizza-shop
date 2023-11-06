@@ -44,6 +44,7 @@ export class PizzaController {
   @Roles(EnumRole.ADMIN, EnumRole.MANAGER)
   @Post('add')
   addPizza(@Body() body: NewPizzaDto) {
+    console.log(body);
     return this.pizzaService.addPizza(body);
   }
 

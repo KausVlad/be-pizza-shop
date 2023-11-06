@@ -101,6 +101,7 @@ export class PizzaService {
     priceStandard,
     ingredients,
     pizzaAttributes,
+    pizzaGroup,
   }: NewPizzaDto) {
     return this.prisma.$transaction(async () => {
       const uniquePizzaCheck = await this.prisma.pizza.count({
@@ -121,6 +122,7 @@ export class PizzaService {
           weightStandard,
           priceStandard,
           doughCrust,
+          pizzaGroup,
           ingredients: {
             connect: ingredients.map((ingredientName) => ({
               ingredientName,

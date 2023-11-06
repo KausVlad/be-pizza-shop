@@ -1,7 +1,15 @@
-import { EnumDoughCrust, EnumPizzaAttributeName } from '@prisma/client';
+import {
+  EnumDoughCrust,
+  EnumPizzaAttributeName,
+  EnumPizzaGroup,
+} from '@prisma/client';
 import { IsArray, IsEnum, IsInt, IsNotEmpty, IsString } from 'class-validator';
 
 export class NewPizzaDto {
+  // @IsOptional()
+  // @IsEnum(EnumSex, { each: true })
+  // EnumSex?: EnumSex[];
+
   @IsString()
   @IsNotEmpty()
   pizzaName: string;
@@ -24,6 +32,11 @@ export class NewPizzaDto {
 
   @IsArray()
   @IsNotEmpty({ each: true })
-  @IsEnum(EnumPizzaAttributeName)
+  @IsEnum(EnumPizzaAttributeName, { each: true })
   pizzaAttributes: EnumPizzaAttributeName[];
+
+  @IsString()
+  @IsNotEmpty()
+  @IsEnum(EnumPizzaGroup)
+  pizzaGroup: EnumPizzaGroup;
 }

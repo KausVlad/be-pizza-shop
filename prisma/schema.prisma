@@ -48,6 +48,15 @@ enum EnumPizzaAttributeName {
   VEGETARIAN
   SPICY
   NEW
+  NONE
+}
+
+enum EnumPizzaGroup {
+  NOVELTIES
+  HEROES
+  WONDER
+  FINEST
+  GOURMET
 }
 
 model User {
@@ -74,6 +83,7 @@ model Pizza {
   weightStandard  Int              @map("weight_standard")
   priceStandard   Int              @map("price_standard")
   doughCrust      EnumDoughCrust   @default(THICK_CRUST) @map("dough_crust")
+  pizzaGroup      EnumPizzaGroup   @map("pizza_group")
   pizzaAttributes PizzaAttribute[]
   ingredients     Ingredient[]
 }
