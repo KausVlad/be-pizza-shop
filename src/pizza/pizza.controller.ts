@@ -11,7 +11,7 @@ import {
 import { Auth } from 'src/user/auth/decorators/auth.decorator';
 import { EnumAuthType } from 'src/user/auth/enums/auth-type.enum';
 import { PizzaService } from './pizza.service';
-import { PizzaIdDto } from './dto/pizza-id.dto';
+import { PizzaNameDto } from './dto/pizza-name.dto';
 import { NewPizzaDto } from './dto/new-pizza.dto';
 import { Roles } from 'src/user/authorization/decorators/roles.decorator';
 import { EnumRole } from '@prisma/client';
@@ -35,9 +35,9 @@ export class PizzaController {
     return this.pizzaService.getPizzas(filters);
   }
 
-  @Get('/:id')
-  getPizza(@Param() param: PizzaIdDto) {
-    return this.pizzaService.getPizza(param.id);
+  @Get('/:pizzaName')
+  getPizza(@Param() param: PizzaNameDto) {
+    return this.pizzaService.getPizza(param.pizzaName);
   }
 
   @Auth(EnumAuthType.Bearer)
@@ -50,15 +50,15 @@ export class PizzaController {
 
   @Auth(EnumAuthType.Bearer)
   @Roles(EnumRole.ADMIN, EnumRole.MANAGER)
-  @Delete('/:id')
-  deletePizza(@Param() param: PizzaIdDto) {
-    return this.pizzaService.deletePizza(param.id);
+  @Delete('/:pizzaName')
+  deletePizza(@Param() param: PizzaNameDto) {
+    return this.pizzaService.deletePizza(param.pizzaName);
   }
 
   @Auth(EnumAuthType.Bearer)
   @Roles(EnumRole.ADMIN, EnumRole.MANAGER)
-  @Patch('/:id')
-  updatePizza(@Param() param: PizzaIdDto, @Body() body: UpdatePizzaDto) {
-    return this.pizzaService.updatePizza(param.id, body);
+  @Patch('/:pizzaName')
+  updatePizza(@Param() param: PizzaNameDto, @Body() body: UpdatePizzaDto) {
+    return this.pizzaService.updatePizza(param.pizzaName, body);
   }
 }

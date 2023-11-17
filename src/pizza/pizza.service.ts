@@ -78,10 +78,10 @@ export class PizzaService {
     }
   }
 
-  async getPizza(id: number) {
+  async getPizza(pizzaName: string) {
     const pizza = await this.prisma.pizza.findFirst({
       where: {
-        id,
+        pizzaName,
       },
       include: {
         ingredients: true,
@@ -89,7 +89,7 @@ export class PizzaService {
       },
     });
     if (!pizza) {
-      throw new NotFoundException(`Pizza with id ${id} not found`);
+      throw new NotFoundException(`Pizza with name ${pizzaName} not found`);
     }
     return pizza;
   }
@@ -138,21 +138,21 @@ export class PizzaService {
     });
   }
 
-  async deletePizza(id: number) {
+  async deletePizza(pizzaName: string) {
     return this.prisma.$transaction(async () => {
       const existingPizza = await this.prisma.pizza.count({
         where: {
-          id,
+          pizzaName,
         },
       });
 
       if (!existingPizza) {
-        throw new NotFoundException(`Pizza with id ${id} not found`);
+        throw new NotFoundException(`Pizza with name ${pizzaName} not found`);
       }
 
       const deletedPizza = await this.prisma.pizza.delete({
         where: {
-          id,
+          pizzaName,
         },
       });
 
@@ -163,18 +163,18 @@ export class PizzaService {
   }
 
   async updatePizza(
-    id: number,
+    pizzaName: string,
     { pizzaAttributes, ingredients, ...data }: UpdatePizzaDto,
   ) {
     return this.prisma.$transaction(async () => {
       const pizzaToUpdate = await this.prisma.pizza.count({
         where: {
-          id,
+          pizzaName,
         },
       });
 
       if (!pizzaToUpdate) {
-        throw new NotFoundException(`Pizza with id ${id} not found`);
+        throw new NotFoundException(`Pizza with name ${pizzaName} not found`);
       }
 
       await this.existingAttributesAndIngredients(pizzaAttributes, ingredients);
@@ -201,7 +201,7 @@ export class PizzaService {
 
       return await this.prisma.pizza.update({
         where: {
-          id,
+          pizzaName,
         },
         data: updateData,
       });
