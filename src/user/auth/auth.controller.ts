@@ -57,10 +57,10 @@ export class AuthController {
     @SetRefreshTokenCookie()
     setRefreshTokenCookie: ISetRefreshTokenCookie,
   ) {
-    const { accessToken, refreshToken } =
+    const { userName, accessToken, refreshToken } =
       await this.authService.refreshTokens(refreshTokenDto);
     setRefreshTokenCookie(refreshToken);
-    return { accessToken };
+    return { userName, accessToken };
   }
 
   @Get('signOut')

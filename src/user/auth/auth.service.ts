@@ -80,7 +80,11 @@ export class AuthService {
     try {
       const user = await this.rotateRefreshToken(refreshTokenDto);
 
-      return this.generateTokens(user);
+      const { accessToken, refreshToken } = await this.generateTokens(user);
+
+      console.log(user.userName);
+
+      return { userName: user.userName, accessToken, refreshToken };
     } catch (error) {
       if (error instanceof invalidatedRefreshTokenError) {
         throw new UnauthorizedException('Access denied');
