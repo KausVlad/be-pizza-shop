@@ -82,8 +82,6 @@ export class AuthService {
 
       const { accessToken, refreshToken } = await this.generateTokens(user);
 
-      console.log(user.userName);
-
       return { userName: user.userName, accessToken, refreshToken };
     } catch (error) {
       if (error instanceof invalidatedRefreshTokenError) {
