@@ -4,4 +4,5 @@ export interface IActiveUserData {
   sub: number;
   email: string;
   role: EnumRole;
+  userName: string;
 }

@@ -82,7 +82,7 @@ export class AuthService {
 
       const { accessToken, refreshToken } = await this.generateTokens(user);
 
-      return { userName: user.userName, accessToken, refreshToken };
+      return { email: user.email, accessToken, refreshToken };
     } catch (error) {
       if (error instanceof invalidatedRefreshTokenError) {
         throw new UnauthorizedException('Access denied');
@@ -159,7 +159,7 @@ export class AuthService {
       this.signToken<Partial<IActiveUserData>>(
         user.id,
         this.jwtConfiguration.accessExpiresIn,
-        { email: user.email, role: user.role },
+        { email: user.email, role: user.role, userName: user.userName },
       ),
       this.signToken<IRefreshTokenId>(
         user.id,
