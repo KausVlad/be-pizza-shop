@@ -82,7 +82,7 @@ export class AuthService {
 
       const { accessToken, refreshToken } = await this.generateTokens(user);
 
-      return { email: user.email, accessToken, refreshToken };
+      return { accessToken, refreshToken };
     } catch (error) {
       if (error instanceof invalidatedRefreshTokenError) {
         throw new UnauthorizedException('Access denied');
