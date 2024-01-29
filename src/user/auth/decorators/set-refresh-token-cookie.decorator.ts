@@ -8,7 +8,7 @@ export const SetRefreshTokenCookie = createParamDecorator(
       return response.cookie('refreshToken', refreshToken, {
         httpOnly: true,
         sameSite: true,
-        secure: false, //TODO change to true
+        secure: true, //TODO change to true
       });
     };
   },
