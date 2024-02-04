@@ -134,6 +134,10 @@ export class PizzaService {
             })),
           },
         },
+        include: {
+          ingredients: true,
+          pizzaAttributes: true,
+        },
       });
     });
   }
@@ -204,6 +208,10 @@ export class PizzaService {
           pizzaName,
         },
         data: updateData,
+        include: {
+          ingredients: true,
+          pizzaAttributes: true,
+        },
       });
     });
   }
