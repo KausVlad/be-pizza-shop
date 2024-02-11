@@ -41,7 +41,7 @@ export class UpdatePizzaDto {
   @IsOptional()
   @IsArray()
   @IsNotEmpty({ each: true })
-  @IsEnum(EnumPizzaAttributeName)
+  @IsEnum(EnumPizzaAttributeName, { each: true })
   pizzaAttributes?: EnumPizzaAttributeName[];
 
   @IsOptional()
