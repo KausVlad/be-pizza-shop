@@ -44,8 +44,7 @@ export class UpdatePizzaDto {
   @IsEnum(EnumPizzaAttributeName)
   pizzaAttributes?: EnumPizzaAttributeName[];
 
-  @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   @IsEnum(EnumPizzaGroup)
   pizzaGroup: EnumPizzaGroup;
 }
