@@ -44,7 +44,6 @@ export class PizzaController {
   @Roles(EnumRole.ADMIN, EnumRole.MANAGER)
   @Post('add')
   addPizza(@Body() body: NewPizzaDto) {
-    console.log(body);
     return this.pizzaService.addPizza(body);
   }
 
@@ -59,7 +58,6 @@ export class PizzaController {
   @Roles(EnumRole.ADMIN, EnumRole.MANAGER)
   @Patch('/:pizzaName')
   updatePizza(@Param() param: PizzaNameDto, @Body() body: UpdatePizzaDto) {
-    console.log(body);
     return this.pizzaService.updatePizza(param.pizzaName, body);
   }
 }
