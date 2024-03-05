@@ -72,21 +72,21 @@ export class IngredientService {
     });
   }
 
-  async updateIngredient(ingredientName: string, newIngredientName: string) {
+  async updateIngredient(ingredientId: number, newIngredientName: string) {
     return this.prisma.$transaction(async (prisma) => {
       const ingredientToUpdate = await prisma.ingredient.count({
         where: {
-          ingredientName,
+          id: ingredientId,
         },
       });
       if (!ingredientToUpdate) {
         throw new NotFoundException(
-          `Ingredient with name '${ingredientName}' not found.`,
+          `Ingredient with id '${ingredientId}' not found.`,
         );
       }
       const updatedIngredient = await prisma.ingredient.update({
         where: {
-          ingredientName,
+          id: ingredientId,
         },
         data: {
           ingredientName: newIngredientName,
