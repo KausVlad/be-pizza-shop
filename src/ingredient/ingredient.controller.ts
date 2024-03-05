@@ -42,7 +42,7 @@ export class IngredientController {
   @Roles(EnumRole.ADMIN, EnumRole.MANAGER)
   @Patch('/:ingredientId')
   updateIngredient(
-    @Param('ingredientName') ingredientId: number,
+    @Param('ingredientId') ingredientId: number,
     @Body() { newIngredientName }: UpdateIngredientDto,
   ) {
     return this.ingredientService.updateIngredient(
