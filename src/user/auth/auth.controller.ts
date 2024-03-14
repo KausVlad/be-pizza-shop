@@ -21,11 +21,20 @@ import { EnumAuthType } from './enums/auth-type.enum';
 import { newRoleForUserDto } from './dto/new-role-for-user.dto';
 import { Roles } from '../authorization/decorators/roles.decorator';
 import { EnumRole } from '@prisma/client';
+import { ActiveUser } from '../decorators/active-user.decorator';
+import { IActiveUserData } from '../interfaces/active-user-data.interface';
 
 @Auth(EnumAuthType.None)
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @Auth(EnumAuthType.Bearer)
+  @Roles(EnumRole.USER, EnumRole.ADMIN, EnumRole.MANAGER)
+  @Get('userinfo')
+  async getUserInfo(@ActiveUser() user: IActiveUserData) {
+    return await this.authService.getUserInfo(user);
+  }
 
   @Post('signUp')
   async signUp(

@@ -23,13 +23,6 @@ import { FiltersPizzaDto } from './dto/filters-pizza.dto';
 export class PizzaController {
   constructor(private readonly pizzaService: PizzaService) {}
 
-  // @Roles('ADMIN', 'MANAGER')
-  // @Get('info')
-  // getPizza(@ActiveUser() user: IActiveUserData): string {
-  //   console.log(user);
-  //   return 'pizza';
-  // }
-
   @Get('all')
   getPizzas(@Query() filters: FiltersPizzaDto) {
     return this.pizzaService.getPizzas(filters);

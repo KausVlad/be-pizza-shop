@@ -32,6 +32,26 @@ export class AuthService {
     private readonly refreshTokenIdsStorage: RefreshTokenIdsStorage,
   ) {}
 
+  async getUserInfo({ email }: IActiveUserData) {
+    return this.prisma.user.findUnique({
+      where: {
+        email,
+      },
+      select: {
+        id: true,
+        email: true,
+        userName: true,
+        phone: true,
+        address: true,
+        birthDate: true,
+        sex: true,
+        role: true,
+        createdAt: true,
+        userPhoto: true,
+      },
+    });
+  }
+
   async signUp({ password, ...userData }: SignUpDto) {
     const uniqueUserCheck = await this.prisma.user.count({
       where: {
