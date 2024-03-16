@@ -25,6 +25,7 @@ import { ActiveUser } from '../decorators/active-user.decorator';
 import { IActiveUserData } from '../interfaces/active-user-data.interface';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { UpdateUserInfoDto } from './dto/update-user-info.dto';
+import { UpdateUserCredentialsDto } from './dto/update-user-credentials.dto';
 
 @Auth(EnumAuthType.None)
 @Controller('auth')
@@ -91,6 +92,16 @@ export class AuthController {
     @ActiveUser() user: IActiveUserData,
   ) {
     return this.authService.changePassword(changePassword, user);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Auth(EnumAuthType.Bearer)
+  @Patch('updateUserCredentials')
+  async updateUserCredentials(
+    @Body() updateUserCredentials: UpdateUserCredentialsDto,
+    @ActiveUser() user: IActiveUserData,
+  ) {
+    return this.authService.updateUserCredentials(updateUserCredentials, user);
   }
 
   @HttpCode(HttpStatus.OK)
