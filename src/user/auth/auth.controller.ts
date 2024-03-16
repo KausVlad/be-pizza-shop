@@ -18,11 +18,12 @@ import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { GetRefreshTokenCookie } from './decorators/get-refresh-token-cookie.decorator';
 import { Auth } from './decorators/auth.decorator';
 import { EnumAuthType } from './enums/auth-type.enum';
-import { newRoleForUserDto } from './dto/new-role-for-user.dto';
+import { NewRoleForUserDto } from './dto/new-role-for-user.dto';
 import { Roles } from '../authorization/decorators/roles.decorator';
 import { EnumRole } from '@prisma/client';
 import { ActiveUser } from '../decorators/active-user.decorator';
 import { IActiveUserData } from '../interfaces/active-user-data.interface';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Auth(EnumAuthType.None)
 @Controller('auth')
@@ -30,7 +31,6 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Auth(EnumAuthType.Bearer)
-  @Roles(EnumRole.USER, EnumRole.ADMIN, EnumRole.MANAGER)
   @Get('userinfo')
   async getUserInfo(@ActiveUser() user: IActiveUserData) {
     return await this.authService.getUserInfo(user);
@@ -84,9 +84,19 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Auth(EnumAuthType.Bearer)
+  @Patch('changePassword')
+  async changePassword(
+    @Body() changePassword: ChangePasswordDto,
+    @ActiveUser() user: IActiveUserData,
+  ) {
+    return this.authService.changePassword(changePassword, user);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Auth(EnumAuthType.Bearer)
   @Roles(EnumRole.ADMIN)
   @Patch('role')
-  changeRole(@Body() newRoleForUser: newRoleForUserDto) {
+  changeRole(@Body() newRoleForUser: NewRoleForUserDto) {
     return this.authService.changeRole(newRoleForUser);
   }
 }

@@ -20,7 +20,8 @@ import {
   RefreshTokenIdsStorage,
   invalidatedRefreshTokenError,
 } from './refresh-token-ids.storage';
-import { newRoleForUserDto } from './dto/new-role-for-user.dto';
+import { NewRoleForUserDto } from './dto/new-role-for-user.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -119,7 +120,7 @@ export class AuthService {
     }
   }
 
-  async changeRole(newRoleForUser: newRoleForUserDto) {
+  async changeRole(newRoleForUser: NewRoleForUserDto) {
     const uniqueUserCheck = await this.prisma.user.count({
       where: {
         email: newRoleForUser.email,
@@ -139,6 +140,47 @@ export class AuthService {
     if (updatedUser) {
       return {
         message: `User ${updatedUser.email} role changed to ${updatedUser.role}`,
+      };
+    }
+  }
+
+  async changePassword(
+    changePassword: ChangePasswordDto,
+    user: IActiveUserData,
+  ) {
+    const uniqueUserCheck = await this.prisma.user.findFirst({
+      where: {
+        id: user.sub,
+      },
+    });
+
+    if (!uniqueUserCheck) {
+      throw new HttpException('User not found', 404);
+    }
+
+    const isPasswordValid = await argon2.verify(
+      uniqueUserCheck.passwordHash,
+      changePassword.oldPassword,
+    );
+
+    if (!isPasswordValid) {
+      throw new HttpException('Invalid credentials', 401);
+    }
+
+    const hashedPassword = await argon2.hash(changePassword.newPassword);
+
+    const updatedUser = await this.prisma.user.update({
+      where: {
+        id: user.sub,
+      },
+      data: {
+        passwordHash: hashedPassword,
+      },
+    });
+
+    if (updatedUser) {
+      return {
+        message: 'Password changed successfully',
       };
     }
   }
