@@ -24,6 +24,7 @@ import { EnumRole } from '@prisma/client';
 import { ActiveUser } from '../decorators/active-user.decorator';
 import { IActiveUserData } from '../interfaces/active-user-data.interface';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { UpdateUserInfoDto } from './dto/update-user-info.dto';
 
 @Auth(EnumAuthType.None)
 @Controller('auth')
@@ -90,6 +91,16 @@ export class AuthController {
     @ActiveUser() user: IActiveUserData,
   ) {
     return this.authService.changePassword(changePassword, user);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Auth(EnumAuthType.Bearer)
+  @Patch('updateUserInfo')
+  async updateUserInfo(
+    @Body() updateUserInfo: UpdateUserInfoDto,
+    @ActiveUser() user: IActiveUserData,
+  ) {
+    return this.authService.updateUserInfo(updateUserInfo, user);
   }
 
   @HttpCode(HttpStatus.OK)

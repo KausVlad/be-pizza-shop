@@ -22,6 +22,7 @@ import {
 } from './refresh-token-ids.storage';
 import { NewRoleForUserDto } from './dto/new-role-for-user.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { UpdateUserInfoDto } from './dto/update-user-info.dto';
 
 @Injectable()
 export class AuthService {
@@ -181,6 +182,42 @@ export class AuthService {
     if (updatedUser) {
       return {
         message: 'Password changed successfully',
+      };
+    }
+  }
+
+  async updateUserInfo(
+    { ...updateUserInfo }: UpdateUserInfoDto,
+    { sub }: IActiveUserData,
+  ) {
+    if (Object.values(updateUserInfo).every((value) => !value)) {
+      return {
+        message: 'No user info to update',
+      };
+    }
+
+    const uniqueUserCheck = await this.prisma.user.count({
+      where: {
+        id: sub,
+      },
+    });
+
+    if (!uniqueUserCheck) {
+      throw new HttpException('User not found', 404);
+    }
+
+    const updatedUserInfo = await this.prisma.user.update({
+      where: {
+        id: sub,
+      },
+      data: {
+        ...updateUserInfo,
+      },
+    });
+
+    if (updatedUserInfo) {
+      return {
+        message: 'User info updated successfully',
       };
     }
   }
