@@ -23,6 +23,7 @@ import {
 import { NewRoleForUserDto } from './dto/new-role-for-user.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { UpdateUserInfoDto } from './dto/update-user-info.dto';
+import { UpdateUserCredentialsDto } from './dto/update-user-credentials.dto';
 
 @Injectable()
 export class AuthService {
@@ -146,12 +147,12 @@ export class AuthService {
   }
 
   async changePassword(
-    changePassword: ChangePasswordDto,
-    user: IActiveUserData,
+    { newPassword, oldPassword }: ChangePasswordDto,
+    { sub }: IActiveUserData,
   ) {
     const uniqueUserCheck = await this.prisma.user.findFirst({
       where: {
-        id: user.sub,
+        id: sub,
       },
     });
 
@@ -161,18 +162,18 @@ export class AuthService {
 
     const isPasswordValid = await argon2.verify(
       uniqueUserCheck.passwordHash,
-      changePassword.oldPassword,
+      oldPassword,
     );
 
     if (!isPasswordValid) {
       throw new HttpException('Invalid credentials', 401);
     }
 
-    const hashedPassword = await argon2.hash(changePassword.newPassword);
+    const hashedPassword = await argon2.hash(newPassword);
 
     const updatedUser = await this.prisma.user.update({
       where: {
-        id: user.sub,
+        id: sub,
       },
       data: {
         passwordHash: hashedPassword,
@@ -182,6 +183,63 @@ export class AuthService {
     if (updatedUser) {
       return {
         message: 'Password changed successfully',
+      };
+    }
+  }
+
+  async updateUserCredentials(
+    { email, phone, password }: UpdateUserCredentialsDto,
+    { sub }: IActiveUserData,
+  ) {
+    if (!email && !phone) {
+      return {
+        message: 'No user credentials to update',
+      };
+    }
+
+    const uniqueUserCheck = await this.prisma.user.findFirst({
+      where: {
+        id: sub,
+      },
+    });
+
+    if (!uniqueUserCheck) {
+      throw new HttpException('User not found', 404);
+    }
+
+    const isPasswordValid = await argon2.verify(
+      uniqueUserCheck.passwordHash,
+      password,
+    );
+
+    if (!isPasswordValid) {
+      throw new HttpException('Invalid credentials', 401);
+    }
+
+    const data: { email?: string; phone?: string } = {};
+    if (email && email !== uniqueUserCheck.email) {
+      data.email = email;
+    }
+    if (phone && phone !== uniqueUserCheck.phone) {
+      data.phone = phone;
+    }
+
+    if (!data.email && !data.phone) {
+      return {
+        message: 'No user credentials to update',
+      };
+    }
+
+    const updatedUserCredentials = await this.prisma.user.update({
+      where: {
+        id: sub,
+      },
+      data,
+    });
+
+    if (updatedUserCredentials) {
+      return {
+        message: 'User credentials updated successfully',
       };
     }
   }
