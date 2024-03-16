@@ -33,10 +33,10 @@ export class AuthService {
     private readonly refreshTokenIdsStorage: RefreshTokenIdsStorage,
   ) {}
 
-  async getUserInfo({ email }: IActiveUserData) {
+  async getUserInfo({ sub }: IActiveUserData) {
     return this.prisma.user.findUnique({
       where: {
-        email,
+        id: sub,
       },
       select: {
         id: true,

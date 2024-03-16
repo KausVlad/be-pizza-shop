@@ -6,10 +6,6 @@ import {
 import { IsArray, IsEnum, IsInt, IsNotEmpty, IsString } from 'class-validator';
 
 export class NewPizzaDto {
-  // @IsOptional()
-  // @IsEnum(EnumSex, { each: true })
-  // EnumSex?: EnumSex[];
-
   @IsString()
   @IsNotEmpty()
   pizzaName: string;
