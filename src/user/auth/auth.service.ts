@@ -280,6 +280,29 @@ export class AuthService {
     }
   }
 
+  async updateUserPhoto(url: string, user: IActiveUserData) {
+    const uniqueUserCheck = await this.prisma.user.count({
+      where: {
+        id: user.sub,
+      },
+    });
+
+    if (!uniqueUserCheck) {
+      throw new HttpException('User not found', 404);
+    }
+
+    await this.prisma.user.update({
+      where: {
+        id: user.sub,
+      },
+      data: {
+        userPhoto: url,
+      },
+    });
+
+    return url;
+  }
+
   private async rotateRefreshToken(refreshTokenDto: RefreshTokenDto) {
     const { sub, refreshTokenId } = await this.jwtService.verifyAsync<
       Pick<IActiveUserData, 'sub'> & IRefreshTokenId

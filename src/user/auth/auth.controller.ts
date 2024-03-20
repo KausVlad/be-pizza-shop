@@ -129,16 +129,18 @@ export class AuthController {
     return this.authService.changeRole(newRoleForUser);
   }
 
-  // @Auth(EnumAuthType.Bearer)
-  @Post('AddUserPhoto')
+  @Auth(EnumAuthType.Bearer)
+  @Post('updateUserPhoto')
   @UseInterceptors(FileInterceptor('file'))
-  async addUserPhoto(@UploadedFile() file: Express.Multer.File) {
-    console.log(file);
+  async updateUserPhoto(
+    @UploadedFile() file: Express.Multer.File,
+    @ActiveUser() user: IActiveUserData,
+  ) {
     const result = await this.cloudinaryService.uploadImage(file.buffer, {
       folder: 'test',
       public_id: file.originalname.split('.')[0],
       filename_override: file.originalname,
     });
-    return result;
+    return this.authService.updateUserPhoto(result.url, user);
   }
 }
