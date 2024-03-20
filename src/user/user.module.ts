@@ -11,6 +11,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AccessTokenGuard } from './auth/guards/access-token.guard';
 import { AuthenticationGuard } from './auth/guards/authentication.guard';
 import { RolesGuard } from './authorization/guards/roles.guard';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { RolesGuard } from './authorization/guards/roles.guard';
     PrismaModule,
   ],
   providers: [
+    CloudinaryService,
     RefreshTokenIdsStorage,
     AuthService,
     PrismaService,
