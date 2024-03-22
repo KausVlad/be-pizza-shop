@@ -137,9 +137,7 @@ export class AuthController {
     @ActiveUser() user: IActiveUserData,
   ) {
     const result = await this.cloudinaryService.uploadImage(file.buffer, {
-      folder: 'test',
-      public_id: file.originalname.split('.')[0],
-      filename_override: file.originalname,
+      folder: 'userPhoto',
     });
     return this.authService.updateUserPhoto(result.url, user);
   }
