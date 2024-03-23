@@ -280,7 +280,7 @@ export class AuthService {
     }
   }
 
-  async updateUserPhoto(url: string, user: IActiveUserData) {
+  async updateUserPhoto(publicId: string, user: IActiveUserData) {
     const uniqueUserCheck = await this.prisma.user.count({
       where: {
         id: user.sub,
@@ -296,11 +296,13 @@ export class AuthService {
         id: user.sub,
       },
       data: {
-        userPhoto: url,
+        userPhoto: publicId,
       },
     });
 
-    return url;
+    return {
+      message: 'User photo updated successfully',
+    };
   }
 
   private async rotateRefreshToken(refreshTokenDto: RefreshTokenDto) {

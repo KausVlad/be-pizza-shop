@@ -139,6 +139,6 @@ export class AuthController {
     const result = await this.cloudinaryService.uploadImage(file.buffer, {
       folder: 'userPhoto',
     });
-    return this.authService.updateUserPhoto(result.url, user);
+    return this.authService.updateUserPhoto(result.public_id, user);
   }
 }
