@@ -40,18 +40,7 @@ export class AuthService {
       where: {
         id: sub,
       },
-      select: {
-        id: true,
-        email: true,
-        userName: true,
-        phone: true,
-        address: true,
-        birthDate: true,
-        sex: true,
-        role: true,
-        createdAt: true,
-        userPhoto: true,
-      },
+      select: this.userSelect,
     });
   }
 
@@ -77,6 +66,7 @@ export class AuthService {
 
     return this.generateTokens(user);
   }
+
   async signIn(signInDto: SignInDto) {
     const user = await this.prisma.user.findFirst({
       where: {
@@ -87,8 +77,10 @@ export class AuthService {
       throw new HttpException('User not found', 404);
     }
 
+    const { passwordHash, ...userInfo } = user;
+
     const isPasswordValid = await argon2.verify(
-      user.passwordHash,
+      passwordHash,
       signInDto.password,
     );
 
@@ -96,16 +88,21 @@ export class AuthService {
       throw new HttpException('Invalid credentials', 401);
     }
 
-    return this.generateTokens(user);
+    const { accessToken, refreshToken } = await this.generateTokens(user);
+
+    return { accessToken, refreshToken, userInfo };
   }
 
   async refreshTokens(refreshTokenDto: RefreshTokenDto) {
     try {
       const user = await this.rotateRefreshToken(refreshTokenDto);
 
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { passwordHash, ...userInfo } = user;
+
       const { accessToken, refreshToken } = await this.generateTokens(user);
 
-      return { accessToken, refreshToken };
+      return { accessToken, refreshToken, userInfo };
     } catch (error) {
       if (error instanceof invalidatedRefreshTokenError) {
         throw new UnauthorizedException('Access denied');
@@ -304,6 +301,20 @@ export class AuthService {
       message: 'User photo updated successfully',
     };
   }
+
+  private userSelect = {
+    id: true,
+    email: true,
+    userName: true,
+    phone: true,
+    address: true,
+    birthDate: true,
+    sex: true,
+    role: true,
+    createdAt: true,
+    updatedAt: true,
+    userPhoto: true,
+  };
 
   private async rotateRefreshToken(refreshTokenDto: RefreshTokenDto) {
     const { sub, refreshTokenId } = await this.jwtService.verifyAsync<

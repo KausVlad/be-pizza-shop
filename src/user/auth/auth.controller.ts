@@ -63,9 +63,10 @@ export class AuthController {
     @SetRefreshTokenCookie()
     setRefreshTokenCookie: ISetRefreshTokenCookie,
   ) {
-    const { accessToken, refreshToken } = await this.authService.signIn(signIn);
+    const { accessToken, refreshToken, userInfo } =
+      await this.authService.signIn(signIn);
     setRefreshTokenCookie(refreshToken);
-    return { accessToken };
+    return { accessToken, userInfo };
   }
 
   @HttpCode(HttpStatus.OK)
@@ -75,10 +76,10 @@ export class AuthController {
     @SetRefreshTokenCookie()
     setRefreshTokenCookie: ISetRefreshTokenCookie,
   ) {
-    const { accessToken, refreshToken } =
+    const { accessToken, refreshToken, userInfo } =
       await this.authService.refreshTokens(refreshTokenDto);
     setRefreshTokenCookie(refreshToken);
-    return { accessToken };
+    return { accessToken, userInfo };
   }
 
   @Get('signOut')
