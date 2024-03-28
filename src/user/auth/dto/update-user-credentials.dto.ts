@@ -9,7 +9,7 @@ import {
 export class UpdateUserCredentialsDto {
   @IsString()
   @MinLength(6)
-  password: string;
+  oldPassword: string;
 
   @IsOptional()
   @IsEmail()

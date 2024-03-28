@@ -185,7 +185,7 @@ export class AuthService {
   }
 
   async updateUserCredentials(
-    { email, phone, password }: UpdateUserCredentialsDto,
+    { email, phone, oldPassword }: UpdateUserCredentialsDto,
     { sub }: IActiveUserData,
   ) {
     if (!email && !phone) {
@@ -206,7 +206,7 @@ export class AuthService {
 
     const isPasswordValid = await argon2.verify(
       uniqueUserCheck.passwordHash,
-      password,
+      oldPassword,
     );
 
     if (!isPasswordValid) {
@@ -225,6 +225,23 @@ export class AuthService {
       return {
         message: 'No user credentials to update',
       };
+    }
+
+    const newUniqueDataCheck = await this.prisma.user.count({
+      where: {
+        OR: [
+          {
+            email: data.email,
+          },
+          {
+            phone: data.phone,
+          },
+        ],
+      },
+    });
+
+    if (newUniqueDataCheck) {
+      throw new HttpException('email or phone already in use', 409);
     }
 
     const updatedUserCredentials = await this.prisma.user.update({
