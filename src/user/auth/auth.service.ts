@@ -24,6 +24,7 @@ import { NewRoleForUserDto } from './dto/new-role-for-user.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { UpdateUserInfoDto } from './dto/update-user-info.dto';
 import { UpdateUserCredentialsDto } from './dto/update-user-credentials.dto';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Injectable()
 export class AuthService {
@@ -33,6 +34,7 @@ export class AuthService {
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
     private readonly refreshTokenIdsStorage: RefreshTokenIdsStorage,
+    private readonly cloudinaryService: CloudinaryService,
   ) {}
 
   async getUserInfo({ sub }: IActiveUserData) {
@@ -285,17 +287,23 @@ export class AuthService {
       data: {
         ...updateUserInfo,
       },
+      select: this.userSelect,
     });
 
     if (updatedUserInfo) {
       return {
         message: 'User info updated successfully',
+        userInfo: updatedUserInfo,
       };
     }
   }
 
-  async updateUserPhoto(publicId: string, user: IActiveUserData) {
-    const uniqueUserCheck = await this.prisma.user.count({
+  async updateUserPhoto(file: Express.Multer.File, user: IActiveUserData) {
+    if (!file) {
+      throw new HttpException('No file uploaded', 400);
+    }
+
+    const uniqueUserCheck = await this.prisma.user.findFirst({
       where: {
         id: user.sub,
       },
@@ -305,18 +313,34 @@ export class AuthService {
       throw new HttpException('User not found', 404);
     }
 
-    await this.prisma.user.update({
+    const result = await this.cloudinaryService.uploadImage(file.buffer, {
+      folder: 'userPhoto',
+    });
+
+    if (!result) {
+      throw new HttpException('Photo upload failed', 500);
+    }
+
+    if (uniqueUserCheck.userPhoto) {
+      await this.cloudinaryService.deleteImage(uniqueUserCheck.userPhoto);
+    }
+
+    const updatedUser = await this.prisma.user.update({
       where: {
         id: user.sub,
       },
       data: {
-        userPhoto: publicId,
+        userPhoto: result.public_id,
       },
+      select: this.userSelect,
     });
 
-    return {
-      message: 'User photo updated successfully',
-    };
+    if (updatedUser) {
+      return {
+        message: 'User photo updated successfully',
+        userInfo: updatedUser,
+      };
+    }
   }
 
   private userSelect = {

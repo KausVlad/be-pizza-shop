@@ -33,4 +33,16 @@ export class CloudinaryService {
         .end(fileBuffer);
     });
   }
+
+  async deleteImage(publicId: string) {
+    return new Promise((resolve, reject) => {
+      cloudinary.v2.uploader.destroy(publicId, (error, result) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result);
+        }
+      });
+    });
+  }
 }

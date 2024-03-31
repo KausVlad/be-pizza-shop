@@ -28,16 +28,12 @@ import { IActiveUserData } from '../interfaces/active-user-data.interface';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { UpdateUserInfoDto } from './dto/update-user-info.dto';
 import { UpdateUserCredentialsDto } from './dto/update-user-credentials.dto';
-import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { FileInterceptor } from '@nestjs/platform-express/multer';
 
 @Auth(EnumAuthType.None)
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly cloudinaryService: CloudinaryService,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Auth(EnumAuthType.Bearer)
   @Get('userinfo')
@@ -132,14 +128,11 @@ export class AuthController {
 
   @Auth(EnumAuthType.Bearer)
   @Post('updateUserPhoto')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('userPhoto'))
   async updateUserPhoto(
     @UploadedFile() file: Express.Multer.File,
     @ActiveUser() user: IActiveUserData,
   ) {
-    const result = await this.cloudinaryService.uploadImage(file.buffer, {
-      folder: 'userPhoto',
-    });
-    return this.authService.updateUserPhoto(result.public_id, user);
+    return this.authService.updateUserPhoto(file, user);
   }
 }
