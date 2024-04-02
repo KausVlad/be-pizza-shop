@@ -4,6 +4,7 @@ import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { IngredientModule } from './ingredient/ingredient.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { DrinksModule } from './drinks/drinks.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
     ConfigModule.forRoot(),
     IngredientModule,
     CloudinaryModule,
+    DrinksModule,
   ],
 })
 export class AppModule {}

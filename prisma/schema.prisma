@@ -77,6 +77,7 @@ model User {
 model Pizza {
   id              Int              @id @default(autoincrement())
   pizzaName       String           @unique @map("pizza_name")
+  pizzaPhoto      String?          @map("pizza_photo")
   createdAt       DateTime         @default(now()) @map("created_at")
   updatedAt       DateTime         @updatedAt @map("updated_at")
   size            EnumPizzaSize    @default(STANDARD)
@@ -99,4 +100,12 @@ model Ingredient {
   ingredientName  String                   @unique @map("ingredient_name")
   ingredientGroup EnumPizzaIngredientGroup @map("ingredient_group")
   pizzas          Pizza[]
+}
+
+model Drink {
+  id         Int      @id @default(autoincrement())
+  drinkName  String   @unique @map("drink_name")
+  drinkPhoto String?  @map("drink_photo")
+  drinkSize  String[] @map("drink_size")
+  drinkPrice Int[]    @map("drink_price")
 }
