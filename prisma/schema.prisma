@@ -108,13 +108,13 @@ model Ingredient {
   pizzas          Pizza[]
 }
 
-model Drink {
-  id         Int      @id @default(autoincrement())
-  drinkName  String   @unique @map("drink_name")
-  drinkPhoto String?  @map("drink_photo")
-  drinkSize  String[] @map("drink_size")
-  drinkPrice Int[]    @map("drink_price")
-}
+// model Drink {
+//   id         Int      @id @default(autoincrement())
+//   drinkName  String   @unique @map("drink_name")
+//   drinkPhoto String?  @map("drink_photo")
+//   drinkSize  String[] @map("drink_size")
+//   drinkPrice Int[]    @map("drink_price")
+// }
 
 model Product {
   id                 Int              @id @default(autoincrement())
@@ -125,6 +125,14 @@ model Product {
   productDescription String?          @map("product_description")
   productGroup       EnumProductGroup @map("product_group")
   productSubGroup    String           @map("product_sub_group")
+  subGroup           ProductSubGroup  @relation(fields: [productSubGroup], references: [productSubGroup])
   createdAt          DateTime         @default(now()) @map("created_at")
   updatedAt          DateTime         @updatedAt @map("updated_at")
+}
+
+model ProductSubGroup {
+  id              Int              @id @default(autoincrement())
+  productSubGroup String           @unique @map("product_sub_group")
+  products        Product[]
+  group           EnumProductGroup
 }

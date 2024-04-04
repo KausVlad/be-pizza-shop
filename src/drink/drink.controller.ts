@@ -11,22 +11,22 @@ import { NewDrinkDto } from './dto/new-drink.dto';
 export class DrinkController {
   constructor(private readonly drinkService: DrinkService) {}
 
-  @Auth(EnumAuthType.None)
-  @Get('all')
-  getDrinks() {
-    return this.drinkService.getDrinks();
-  }
+  // @Auth(EnumAuthType.None)
+  // @Get('all')
+  // getDrinks() {
+  //   return this.drinkService.getDrinks();
+  // }
 
-  @Auth(EnumAuthType.None)
-  @Get('/:drinkName')
-  getDrink(@Param() param: DrinkNameDto) {
-    return this.drinkService.getDrink(param);
-  }
+  // @Auth(EnumAuthType.None)
+  // @Get('/:drinkName')
+  // getDrink(@Param() param: DrinkNameDto) {
+  //   return this.drinkService.getDrink(param);
+  // }
 
-  @Auth(EnumAuthType.Bearer)
-  @Roles(EnumRole.ADMIN, EnumRole.MANAGER)
-  @Post('add')
-  addDrink(@Body() body: NewDrinkDto) {
-    return this.drinkService.addDrink(body);
-  }
+  // @Auth(EnumAuthType.Bearer)
+  // @Roles(EnumRole.ADMIN, EnumRole.MANAGER)
+  // @Post('add')
+  // addDrink(@Body() body: NewDrinkDto) {
+  //   return this.drinkService.addDrink(body);
+  // }
 }

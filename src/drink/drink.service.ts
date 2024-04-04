@@ -11,45 +11,45 @@ import { NewDrinkDto } from './dto/new-drink.dto';
 export class DrinkService {
   constructor(private readonly prisma: PrismaService) {}
 
-  getDrinks() {
-    return this.prisma.drink.findMany();
-  }
+  // getDrinks() {
+  //   return this.prisma.drink.findMany();
+  // }
 
-  async getDrink({ drinkName }: DrinkNameDto) {
-    const drink = await this.prisma.drink.findUnique({
-      where: {
-        drinkName,
-      },
-    });
+  // async getDrink({ drinkName }: DrinkNameDto) {
+  //   const drink = await this.prisma.drink.findUnique({
+  //     where: {
+  //       drinkName,
+  //     },
+  //   });
 
-    if (!drink) {
-      throw new NotFoundException(`Drink with name ${drinkName} not found`);
-    }
+  //   if (!drink) {
+  //     throw new NotFoundException(`Drink with name ${drinkName} not found`);
+  //   }
 
-    return drink;
-  }
+  //   return drink;
+  // }
 
-  async addDrink(data: NewDrinkDto) {
-    console.log(data);
+  // async addDrink(data: NewDrinkDto) {
+  //   console.log(data);
 
-    await this.uniqueDrinkCheck(data.drinkName);
+  //   await this.uniqueDrinkCheck(data.drinkName);
 
-    return this.prisma.drink.create({
-      data,
-    });
-  }
+  //   return this.prisma.drink.create({
+  //     data,
+  //   });
+  // }
 
-  private async uniqueDrinkCheck(drinkName: string) {
-    const drink = await this.prisma.drink.count({
-      where: {
-        drinkName,
-      },
-    });
+  // private async uniqueDrinkCheck(drinkName: string) {
+  //   const drink = await this.prisma.drink.count({
+  //     where: {
+  //       drinkName,
+  //     },
+  //   });
 
-    if (drink) {
-      throw new ConflictException(
-        `Drink with name ${drinkName} already exists`,
-      );
-    }
-  }
+  //   if (drink) {
+  //     throw new ConflictException(
+  //       `Drink with name ${drinkName} already exists`,
+  //     );
+  //   }
+  // }
 }
