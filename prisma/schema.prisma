@@ -59,6 +59,12 @@ enum EnumPizzaGroup {
   GOURMET
 }
 
+enum EnumProductGroup {
+  Drink
+  Sides
+  Dessert
+}
+
 model User {
   id           Int      @id @default(autoincrement())
   userPhoto    String?  @map("user_photo")
@@ -108,4 +114,17 @@ model Drink {
   drinkPhoto String?  @map("drink_photo")
   drinkSize  String[] @map("drink_size")
   drinkPrice Int[]    @map("drink_price")
+}
+
+model Product {
+  id                 Int              @id @default(autoincrement())
+  productName        String           @unique @map("product_name")
+  productPhoto       String?          @map("product_photo")
+  productSize        String[]         @map("product_size")
+  productPrice       Int[]            @map("product_price")
+  productDescription String?          @map("product_description")
+  productGroup       EnumProductGroup @map("product_group")
+  productSubGroup    String           @map("product_sub_group")
+  createdAt          DateTime         @default(now()) @map("created_at")
+  updatedAt          DateTime         @updatedAt @map("updated_at")
 }
