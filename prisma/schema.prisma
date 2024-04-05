@@ -125,14 +125,14 @@ model Product {
   productDescription String?          @map("product_description")
   productGroup       EnumProductGroup @map("product_group")
   productSubGroup    String           @map("product_sub_group")
-  subGroup           ProductSubGroup  @relation(fields: [productSubGroup], references: [productSubGroup])
+  subGroup           ProductSubGroup  @relation(fields: [productSubGroup], references: [subGroup])
   createdAt          DateTime         @default(now()) @map("created_at")
   updatedAt          DateTime         @updatedAt @map("updated_at")
 }
 
 model ProductSubGroup {
-  id              Int              @id @default(autoincrement())
-  productSubGroup String           @unique @map("product_sub_group")
-  products        Product[]
-  group           EnumProductGroup
+  id       Int              @id @default(autoincrement())
+  subGroup String           @unique @map("product_sub_group")
+  products Product[]
+  group    EnumProductGroup
 }
