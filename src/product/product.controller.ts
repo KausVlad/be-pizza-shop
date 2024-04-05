@@ -6,6 +6,8 @@ import {
   Param,
   Patch,
   Post,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Auth } from 'src/user/auth/decorators/auth.decorator';
 import { EnumAuthType } from 'src/user/auth/enums/auth-type.enum';
@@ -15,6 +17,7 @@ import { Roles } from 'src/user/authorization/decorators/roles.decorator';
 import { EnumRole } from '@prisma/client';
 import { NewProductDto } from './dto/new-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('product')
 export class ProductController {
@@ -34,17 +37,31 @@ export class ProductController {
 
   @Auth(EnumAuthType.Bearer)
   @Roles(EnumRole.ADMIN, EnumRole.MANAGER)
+  @UseInterceptors(FileInterceptor('productPhoto'))
   @Post('add')
-  addProduct(@Body() body: NewProductDto) {
-    return this.productService.addProduct(body);
+  addProduct(
+    @Body() body: NewProductDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.productService.addProduct(body, file);
   }
 
   @Auth(EnumAuthType.Bearer)
   @Roles(EnumRole.ADMIN, EnumRole.MANAGER)
   @Patch('/:id')
   updateProduct(@Param() param: ProductIdDto, @Body() body: UpdateProductDto) {
-    console.log(param);
     return this.productService.updateProduct(param, body);
+  }
+
+  @Auth(EnumAuthType.Bearer)
+  @Roles(EnumRole.ADMIN, EnumRole.MANAGER)
+  @Patch('img/:id')
+  @UseInterceptors(FileInterceptor('productPhoto'))
+  updateProductPhoto(
+    @Param() param: ProductIdDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.productService.updateProductPhoto(param, file);
   }
 
   @Auth(EnumAuthType.Bearer)

@@ -8,10 +8,14 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { ProductIdDto } from './dto/product-id.dto';
 import { NewProductDto } from './dto/new-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Injectable()
 export class ProductService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {}
 
   async getProducts() {
     return this.prisma.product.findMany();
@@ -23,12 +27,21 @@ export class ProductService {
     return product;
   }
 
-  async addProduct(data: NewProductDto) {
+  async addProduct(data: NewProductDto, file: Express.Multer.File) {
+    if (!file) {
+      throw new NotFoundException('File not found');
+    }
+
     await this.existingProductName(data.productName);
 
     const productSubGroup = await this.existingProductSubGroup(
       data.productSubGroup,
     );
+
+    const { public_id: productPhoto } =
+      await this.cloudinaryService.uploadImage(file.buffer, {
+        folder: 'productPhoto',
+      });
 
     const product = await this.prisma.product.create({
       data: {
@@ -38,6 +51,7 @@ export class ProductService {
         productDescription: data.productDescription,
         productGroup: productSubGroup.group,
         productSubGroup: productSubGroup.subGroup,
+        productPhoto,
       },
     });
 
@@ -73,6 +87,30 @@ export class ProductService {
         id,
       },
       data,
+    });
+
+    return product;
+  }
+
+  async updateProductPhoto({ id }: ProductIdDto, file: Express.Multer.File) {
+    if (!file) {
+      throw new NotFoundException('File not found');
+    }
+
+    await this.findProductById(id);
+
+    const { public_id: productPhoto } =
+      await this.cloudinaryService.uploadImage(file.buffer, {
+        folder: 'productPhoto',
+      });
+
+    const product = await this.prisma.product.update({
+      where: {
+        id,
+      },
+      data: {
+        productPhoto,
+      },
     });
 
     return product;
