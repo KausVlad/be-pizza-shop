@@ -9,6 +9,7 @@ import { ProductIdDto } from './dto/product-id.dto';
 import { NewProductDto } from './dto/new-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class ProductService {
@@ -117,12 +118,23 @@ export class ProductService {
   }
 
   async deleteProduct({ id }: ProductIdDto) {
-    await this.findProductById(id);
+    return this.prisma.$transaction(async () => {
+      try {
+        const deletedProduct = await this.prisma.product.delete({
+          where: {
+            id,
+          },
+        });
 
-    return this.prisma.product.delete({
-      where: {
-        id,
-      },
+        return {
+          message: `Product ${deletedProduct.productName} was successfully deleted`,
+        };
+      } catch (error) {
+        if (error instanceof PrismaClientKnownRequestError) {
+          throw new NotFoundException(`Product with id ${id} not found`);
+        }
+        throw error;
+      }
     });
   }
 
