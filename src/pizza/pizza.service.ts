@@ -8,6 +8,8 @@ import { NewPizzaDto } from './dto/new-pizza.dto';
 import { UpdatePizzaDto } from './dto/update-pizza.dto';
 import { EnumDoughCrust, EnumPizzaAttributeName } from '@prisma/client';
 import { FiltersPizzaDto } from './dto/filters-pizza.dto';
+import { PizzaIdDto } from './dto/pizza-id.dto';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 type TUpdatePizza = {
   pizzaName?: string;
@@ -142,27 +144,27 @@ export class PizzaService {
     });
   }
 
-  async deletePizza(pizzaName: string) {
+  async deletePizza({ id }: PizzaIdDto) {
     return this.prisma.$transaction(async () => {
-      const existingPizza = await this.prisma.pizza.count({
-        where: {
-          pizzaName,
-        },
-      });
+      try {
+        const deletedPizza = await this.prisma.pizza.delete({
+          where: {
+            id,
+          },
+        });
 
-      if (!existingPizza) {
-        throw new NotFoundException(`Pizza with name ${pizzaName} not found`);
+        return {
+          message: `Pizza ${deletedPizza.pizzaName} was successfully deleted`,
+        };
+      } catch (error) {
+        if (
+          error instanceof PrismaClientKnownRequestError &&
+          error.code === 'P2025'
+        ) {
+          throw new NotFoundException(`Pizza with id ${id} not found`);
+        }
+        throw error;
       }
-
-      const deletedPizza = await this.prisma.pizza.delete({
-        where: {
-          pizzaName,
-        },
-      });
-
-      return {
-        message: `Pizza ${deletedPizza.pizzaName} was successfully deleted`,
-      };
     });
   }
 

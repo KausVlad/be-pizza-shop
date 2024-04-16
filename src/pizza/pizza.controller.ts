@@ -17,6 +17,7 @@ import { Roles } from 'src/user/authorization/decorators/roles.decorator';
 import { EnumRole } from '@prisma/client';
 import { UpdatePizzaDto } from './dto/update-pizza.dto';
 import { FiltersPizzaDto } from './dto/filters-pizza.dto';
+import { PizzaIdDto } from './dto/pizza-id.dto';
 
 @Auth(EnumAuthType.None)
 @Controller('pizza')
@@ -42,9 +43,9 @@ export class PizzaController {
 
   @Auth(EnumAuthType.Bearer)
   @Roles(EnumRole.ADMIN, EnumRole.MANAGER)
-  @Delete('/:pizzaName')
-  deletePizza(@Param() param: PizzaNameDto) {
-    return this.pizzaService.deletePizza(param.pizzaName);
+  @Delete('/:id')
+  deletePizza(@Param() param: PizzaIdDto) {
+    return this.pizzaService.deletePizza(param);
   }
 
   @Auth(EnumAuthType.Bearer)
