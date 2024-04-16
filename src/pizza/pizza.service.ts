@@ -157,10 +157,7 @@ export class PizzaService {
           message: `Pizza ${deletedPizza.pizzaName} was successfully deleted`,
         };
       } catch (error) {
-        if (
-          error instanceof PrismaClientKnownRequestError &&
-          error.code === 'P2025'
-        ) {
+        if (error instanceof PrismaClientKnownRequestError) {
           throw new NotFoundException(`Pizza with id ${id} not found`);
         }
         throw error;
