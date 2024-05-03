@@ -6,6 +6,7 @@ import {
 import { PrismaService } from 'src/prisma/prisma.service';
 import { IngredientsDto } from './dto/ingredients.dto';
 import { EnumPizzaIngredientGroup } from '@prisma/client';
+import { IngredientsIdDto } from './dto/ingredients-id.dto';
 
 @Injectable()
 export class IngredientService {
@@ -46,28 +47,26 @@ export class IngredientService {
     }
   }
 
-  async deleteIngredient(ingredient: string) {
+  async deleteIngredient({ id }: IngredientsIdDto) {
     return this.prisma.$transaction(async (prisma) => {
       const existingIngredient = await prisma.ingredient.findUnique({
         where: {
-          ingredientName: ingredient,
+          id,
         },
       });
 
       if (!existingIngredient) {
-        throw new NotFoundException(
-          `Ingredient with name '${ingredient}' not found.`,
-        );
+        throw new NotFoundException(`Ingredient with ID '${id}' not found.`);
       }
 
-      await prisma.ingredient.delete({
+      const deletedIngredient = await prisma.ingredient.delete({
         where: {
-          ingredientName: ingredient,
+          id,
         },
       });
 
       return {
-        message: `Ingredient '${ingredient}' was successfully deleted.`,
+        message: `Ingredient '${deletedIngredient.ingredientName}' was successfully deleted.`,
       };
     });
   }

@@ -16,6 +16,7 @@ import { EnumRole } from '@prisma/client';
 import { Roles } from 'src/user/authorization/decorators/roles.decorator';
 import { IngredientFilterDto } from './dto/ingredient-filter.dto';
 import { UpdateIngredientDto } from './dto/update-ingredient.dto';
+import { IngredientsIdDto } from './dto/ingredients-id.dto';
 
 @Controller('ingredient')
 export class IngredientController {
@@ -34,9 +35,9 @@ export class IngredientController {
   }
 
   @Roles(EnumRole.ADMIN, EnumRole.MANAGER)
-  @Delete('/:ingredientName')
-  deleteIngredient(@Param('ingredientName') ingredientName: string) {
-    return this.ingredientService.deleteIngredient(ingredientName);
+  @Delete('/:id')
+  deleteIngredient(@Param() param: IngredientsIdDto) {
+    return this.ingredientService.deleteIngredient(param);
   }
 
   @Roles(EnumRole.ADMIN, EnumRole.MANAGER)
